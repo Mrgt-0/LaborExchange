@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Post a job position or create your online resume by TheJobs!">
+  <meta name="keywords" content="">
+
+  <title>TheJobs - Register</title>
+  <link href="/assets/css/app.min.css" rel="stylesheet">
+  <link href="/assets/css/custom.css" rel="stylesheet">
+
+  <!-- Fonts -->
+  <link href='http://fonts.googleapis.com/css?family=Oswald:100,300,400,500,600,800%7COpen+Sans:300,400,500,600,700,800%7CMontserrat:400,700' rel='stylesheet' type='text/css'>
+
+  <!-- Favicons -->
+<!--  <link rel="apple-touch-icon" href="/apple-touch-icon.png">-->
+<!--  <link rel="icon" href="/assets/img/favicon.ico">-->
+
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .login-block {
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      text-align: center;
+    }
+
+    .login-block img {
+      width: 100px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    .error-message {
+      color: red;
+      margin-top: 10px;
+    }
+
+    .login-links {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .login-links a {
+      color: #3498db;
+      text-decoration: none;
+    }
+
+    .login-links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body class="login-page">
+<main>
+  <div class="login-block">
+    <img src="/assets/img/logo.png" alt="Logo of TheJobs">
+    <h1>Создайте свою учетную запись</h1>
+
+    <form action="/auth/register" method="post">
+      <label for="name">Имя:</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="lastname">Фамилия:</label>
+      <input type="text" id="lastname" name="lastname" required>
+
+      <label for="email">Электронная почта:</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="password">Пароль:</label>
+      <input type="password" id="password" name="password" required>
+
+      <label for="usertype">Тип пользователя:</label>
+      <select id="usertype" name="userTypes" required>
+        <option value="CANDIDATE">Соискатель</option>
+        <option value="EMPLOYER">Работодатель</option>
+        <option value="ADMIN">Администратор</option>
+      </select>
+
+      <button type="submit">Зарегистрироваться</button>
+      <div class="error-message" th:if="${errorMessage}">
+        <p th:text="${errorMessage}"></p>
+      </div>
+    </form>
+  </div>
+
+  <div class="login-links">
+    <p>У вас уже есть аккаунт? <a href="/auth/login">Войти</a></p>
+  </div>
+</main>
+
+<!-- Scripts -->
+<script src="/assets/js/app.min.js"></script>
+<script src="/assets/js/custom.js"></script>
+</body>
+</html>

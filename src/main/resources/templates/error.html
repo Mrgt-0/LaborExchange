@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Ошибка</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+  <h1 class="text-danger">Произошла ошибка!</h1>
+  <div class="alert alert-danger">
+    <strong>Ошибка:</strong> <span th:text="${errorMessage}">Ошибка не найдена.</span>
+    <br>
+    <strong>Тип ошибки:</strong> <span th:text="${errorType}">Неизвестный тип ошибки.</span>
+  </div>
+  <a href="/users/profile" class="btn btn-primary">На главную</a>
+  <a href="/vacancy-list" class="btn btn-secondary">Вернуться к списку вакансий</a>
+</div>
+</body>
+</html>

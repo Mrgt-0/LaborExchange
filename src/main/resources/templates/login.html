@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Вход в систему TheJobs">
+  <meta name="keywords" content="">
+
+  <title>TheJobs - Вход</title>
+
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .login-block {
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      text-align: center;
+    }
+
+    .login-block img {
+      width: 100px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    .error-message {
+      color: red;
+      margin-top: 10px;
+    }
+
+    .login-links {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .login-links a {
+      color: #3498db;
+      text-decoration: none;
+    }
+
+    .login-links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+  <!-- Styles -->
+<!--  <link href="/assets/css/app.min.css" rel="stylesheet">-->
+<!--  <link href="/assets/css/custom.css" rel="stylesheet">-->
+
+  <!-- Fonts -->
+  <link href='http://fonts.googleapis.com/css?family=Oswald:100,300,400,500,600,800%7COpen+Sans:300,400,500,600,700,800%7CMontserrat:400,700' rel='stylesheet' type='text/css'>
+
+  <!-- Favicons -->
+<!--  <link rel="apple-touch-icon" href="/apple-touch-icon.png">-->
+<!--  <link rel="icon" href="/assets/img/favicon.ico">-->
+</head>
+
+<body class="login-page">
+<main>
+
+  <div class="login-block">
+    <img src="/assets/img/logo.png" alt="">
+    <h1>Войдите в свою учетную запись</h1>
+
+    <form th:action="@{/auth/login}" method="post">
+      <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+
+      <div class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon"><i class="ti-email"></i></span>
+          <label>
+            <input type="text" class="form-control" name="email" placeholder="Почта" required autocomplete="email">
+          </label>
+        </div>
+      </div>
+
+      <hr class="hr-xs">
+
+      <div class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon"><i class="ti-unlock"></i></span>
+          <label>
+            <input type="password" class="form-control" name="password" placeholder="Пароль" required autocomplete="current-password">
+          </label>
+        </div>
+      </div>
+
+      <div th:if="${errorMessage}" class="error-message">
+        <p th:text="${errorMessage}"></p>
+      </div>
+
+      <button class="btn btn-primary btn-block" type="submit">Войти</button>
+    </form>
+  </div>
+
+  <div class="login-links">
+    <a class="pull-left" href="/auth/user-forget-pass">Забыли пароль?</a>
+    <a class="pull-right" href="/auth/register">Зарегистрируйте аккаунт</a>
+  </div>
+</main>
+
+<!-- Scripts -->
+<script src="/assets/js/app.min.js"></script>
+<script src="/assets/js/custom.js"></script>
+</body>
+</html>
