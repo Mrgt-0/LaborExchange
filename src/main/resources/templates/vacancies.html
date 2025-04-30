@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список вакансий</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>Список вакансий</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Локация</th>
+            <th>Зарплата</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="vacancy : ${vacancies}">
+            <td th:text="${vacancy.id}"></td>
+            <td th:text="${vacancy.title}"></td>
+            <td th:text="${vacancy.description}"></td>
+            <td th:text="${vacancy.location}"></td>
+            <td th:text="${vacancy.salary}"></td>
+            <td class="actions">
+                <a th:href="@{/vacancies/{id}(id=${vacancy.id})}" class="action-btn">Редактировать</a>
+                <form method="post" action="/vacancies/delete-vacancy" style="display:inline;">
+                    <input type="hidden" name="vacancyId" th:value="${vacancy.id}">
+                    <button type="submit" class="action-btn">Удалить</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <button onclick="window.location.href='/vacancies/addVacancy'" class="action-btn">Добавить вакансию</button>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

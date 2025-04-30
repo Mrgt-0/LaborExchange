@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали вакансии</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>Детали вакансии</h1>
+    <h2 th:text="${vacancy.title}"></h2>
+    <p><strong>Описание:</strong> <span th:text="${vacancy.description}"></span></p>
+    <p><strong>Локация:</strong> <span th:text="${vacancy.location}"></span></p>
+    <p><strong>Зарплата:</strong> <span th:text="${vacancy.salary}"></span> руб.</p>
+
+    <button onclick="window.location.href='/vacancies'" class="action-btn">Вернуться к списку вакансий</button>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

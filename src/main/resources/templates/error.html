@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+  <meta charset="UTF-8">
+  <title>Ошибка</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+
+<div class="error-container">
+  <h1>Упс!</h1>
+  <p th:text="${errorMessage}">Произошла ошибка. Попробуйте позже.</p>
+  <p>Вернуться на <a th:href="@{/auth/login}">на главную</a>.</p>
+</div>
+</body>
+</html>

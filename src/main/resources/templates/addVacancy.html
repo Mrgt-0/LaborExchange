@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить вакансию</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Подключение стилей -->
+</head>
+<body>
+<div class="container">
+    <h1>Добавить вакансию</h1>
+    <form id="vacancy-form" method="post" action="/vacancies/addVacancy">
+        <label for="title">Название:</label>
+        <input type="text" id="title" name="title" required>
+
+        <label for="description">Описание:</label>
+        <textarea id="description" name="description" required></textarea>
+
+        <label for="location">Локация:</label>
+        <input type="text" id="location" name="location" required>
+
+        <label for="salary">Зарплата:</label>
+        <input type="number" id="salary" name="salary" step="0.01" required>
+
+        <input type="hidden" name="employerId" value="1"> <!-- Замените на реальный ID работодателя -->
+
+        <button type="submit">Создать вакансию</button>
+    </form>
+</div>
+<script src="script.js"></script> <!-- Подключение JavaScript -->
+</body>
+</html>
