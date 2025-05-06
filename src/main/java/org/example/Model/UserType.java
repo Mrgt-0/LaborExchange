@@ -36,4 +36,8 @@ public class UserType {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public String getTypeString() {
+        return type.toString();
+    }
 }

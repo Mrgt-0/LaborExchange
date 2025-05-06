@@ -114,7 +114,7 @@
             <td th:text="${vacancy.title}"></td>
             <td th:text="${vacancy.salary}"></td>
             <td>
-                <a th:href="@{/vacancies/vacancy-view/{id}(id=${vacancy.id})}" class="btn btn-info">Просмотреть</a>
+                <a th:href="@{/vacancies/employer-vacancy-view/{id}(id=${vacancy.id})}" class="btn btn-info">Просмотреть</a>
             </td>
         </tr>
         <tr th:if="${#lists.isEmpty(myVacancies)}">

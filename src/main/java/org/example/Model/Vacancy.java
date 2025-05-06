@@ -13,7 +13,7 @@ public class Vacancy {
     private String location;
     private float salary;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "employer_id", nullable = false)
     private User employer;
 

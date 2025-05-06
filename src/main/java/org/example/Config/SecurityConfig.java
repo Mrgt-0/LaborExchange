@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 @Configuration
 @EnableWebSecurity
@@ -30,9 +31,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login", "/auth/register").permitAll()
-                        .requestMatchers("/users/user-profile", "/vacancies", "resume-add", "/resume-list",
-                                "/resume-edit", "/vacancy-add", "/vacancy-edit", "/delete-vacancy").authenticated()
-                        .requestMatchers( "/vacancies/my", "/vacancies/delete-vacancy", "/vacancies/editVacancy").hasRole("EMPLOYER")
+                        .requestMatchers("/users/user-profile", "/vacancies/all", "resume-add", "/resume-list",
+                                "/resume-edit").authenticated()
+                        .requestMatchers( "/vacancies/my", "/vacancies/delete-vacancy", "/vacancies/vacancy-edit").hasRole("EMPLOYER")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

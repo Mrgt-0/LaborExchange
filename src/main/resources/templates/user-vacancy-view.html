@@ -46,9 +46,14 @@
     <p th:text="${vacancy.salary}">Зарплата</p>
 
     <h3>Работодатель:</h3>
-    <p th:text="${vacancy.employer.name}">Работодатель</p>
-
-    <a href="/vacancies/vacancy-list" class="btn btn-primary">Вернуться к списку вакансий</a>
+    <p>
+        <strong th:text="${employer.name}">Имя работодателя</strong>
+        <br/>
+        <span th:text="${employer.email}">Email работодателя</span>
+        <br/>
+    </p>
+    <hr>
+    <a href="/vacancies/all" class="btn btn-primary">Вернуться к списку вакансий</a>
 </div>
 </body>
 </html>

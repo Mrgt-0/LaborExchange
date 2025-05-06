@@ -5,7 +5,9 @@ import org.example.DTO.UserDTO;
 import org.example.DTO.VacancyDTO;
 import org.example.Mapper.UserMapper;
 import org.example.Mapper.VacancyMapper;
+import org.example.Model.User;
 import org.example.Model.Vacancy;
+import org.example.Repository.UserRepository;
 import org.example.Repository.VacancyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,20 +25,21 @@ public class VacancyService {
     private VacancyRepository vacancyRepository;
 
     @Autowired
-    private VacancyMapper vacancyMapper;
+    private UserRepository userRepository;
 
     @Autowired
     private UserMapper userMapper;
 
-    public void create(String title, String description, String location, float salary,  UserDTO employer) {
-        VacancyDTO vacancyDTO = new VacancyDTO();
-        vacancyDTO.setTitle(title);
-        vacancyDTO.setDescription(description);
-        vacancyDTO.setLocation(location);
-        vacancyDTO.setSalary(salary);
-        vacancyDTO.setEmployer(userMapper.toEntity(employer));
-        vacancyRepository.save(vacancyMapper.toEntity(vacancyDTO));
-        logger.info("Вакансия успешно создана: {}",  vacancyDTO.getTitle());
+    @Transactional
+    public void create(String title, String description, String location, float salary, User employer) {
+        Vacancy vacancy = new Vacancy();
+        vacancy.setTitle(title);
+        vacancy.setDescription(description);
+        vacancy.setLocation(location);
+        vacancy.setSalary(salary);
+        vacancy.setEmployer(employer);
+        vacancyRepository.save(vacancy);
+        logger.info("Вакансия успешно создана: {}", vacancy.getTitle());
     }
 
     public List<Vacancy> getAllVacancies() {
@@ -44,16 +47,20 @@ public class VacancyService {
     }
 
     @Transactional
-    public void edit(Long vacancyId, VacancyDTO updateVacancy) {
-        vacancyRepository.findById(vacancyId)
-                .map(vacancy ->  {
-                    vacancy.setTitle(updateVacancy.getTitle());
-                    vacancy.setDescription(updateVacancy.getDescription());
-                    vacancy.setLocation(updateVacancy.getLocation());
-                    vacancy.setSalary(updateVacancy.getSalary());
-                    return vacancyRepository.save(vacancy);
-                })
-                .orElseThrow(() -> new RuntimeException("Вакансия не найдена."));
+    public void edit(Long vacancyId, VacancyDTO vacancyDTO, UserDTO employerUser) {
+        Vacancy vacancy = vacancyRepository.findById(vacancyId)
+                .orElseThrow(() -> new RuntimeException("Vacancy not found"));
+
+        vacancy.setTitle(vacancyDTO.getTitle());
+        vacancy.setDescription(vacancyDTO.getDescription());
+        vacancy.setLocation(vacancyDTO.getLocation());
+        vacancy.setSalary(vacancyDTO.getSalary());
+
+        User employer = userRepository.findById(employerUser.getId())
+                .orElseThrow(() -> new RuntimeException("Employer not found"));
+
+        vacancy.setEmployer(employer);
+        vacancyRepository.save(vacancy);
     }
 
     public void delete(Long vacancyId) {

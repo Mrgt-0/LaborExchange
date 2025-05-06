@@ -108,14 +108,20 @@
             <td th:text="${vacancy.title}"></td>
             <td th:text="${vacancy.salary}"></td>
             <td>
-                <a th:href="@{/vacancies/vacancy-view/{id}(id=${vacancy.id})}" class="btn btn-info">Просмотреть</a>
+                <a th:href="@{/vacancies/user-vacancy-view/{id}(id=${vacancy.id})}" class="btn btn-info">Просмотреть</a>
+                <input type="hidden" name="employer.id" th:value="${vacancy.employer.id}"/>
             </td>
         </tr>
         <tr th:if="${#lists.isEmpty(vacancies)}">
             <td colspan="7" class="text-center">Вакансии не найдены.</td>
         </tr>
         <br>
-        <a href="/users/user-profile" class="btn btn-primary">На главную</a>
+        <th:block th:if="${#authentication.authorities.?[authority == 'ROLE_EMPLOYER'].size() > 0}">
+            <a href="/users/employer-profile">На главную</a>
+        </th:block>
+        <th:block th:unless="${#authentication.authorities.?[authority == 'ROLE_EMPLOYER'].size() > 0}">
+            <a href="/users/user-profile">На главную</a>
+        </th:block>
         </tbody>
     </table>
 </div>

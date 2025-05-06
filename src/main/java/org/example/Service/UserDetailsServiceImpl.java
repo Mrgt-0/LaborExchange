@@ -25,12 +25,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserDTO userDTO = userService.findByEmail(email);
-        logger.info("Поиск пользователя с email: {}", userDTO.getEmail());
         if (userDTO == null) {
-            logger.error("Пользователь не найден: {}", email);
-            throw new UsernameNotFoundException("Пользователь не найден: " + email);
+            logger.error("Пользователь не найден для email: {}", email);
+            throw new UsernameNotFoundException("Пользователь не найден");
         }
-        logger.info("Пользователь найден: {}", userDTO.getEmail());
+        logger.info("Пользователь найден: {}", userDTO);
         return new MyUserDetails(userDTO);
     }
 }

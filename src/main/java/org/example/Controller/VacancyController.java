@@ -1,4 +1,7 @@
 package org.example.Controller;
+import org.example.Repository.UserRepository;
+import org.example.Repository.VacancyRepository;
+import org.springframework.security.core.Authentication;
 import org.example.DTO.UserDTO;
 import org.example.DTO.VacancyDTO;
 import org.example.Mapper.UserMapper;
@@ -14,17 +17,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/vacancies")
 public class VacancyController {
     private static final Logger logger = LoggerFactory.getLogger(VacancyController.class);
-
-    @Autowired
-    private UserMapper userMapper;
 
     @Autowired
     private VacancyService vacancyService;
@@ -34,6 +35,9 @@ public class VacancyController {
 
     @Autowired
     private VacancyMapper vacancyMapper;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @PreAuthorize("hasRole('EMPLOYER') or hasRole('ADMIN')")
     @GetMapping("/vacancy-add")
@@ -54,13 +58,17 @@ public class VacancyController {
 
     @PreAuthorize("hasRole('EMPLOYER') or hasRole('ADMIN')")
     @PostMapping("/vacancy-add")
-    public String  addVacancy(@RequestParam String title, @RequestParam String description,
-                              @RequestParam String location, @RequestParam float salary, @RequestParam  Long employerId) {
-        logger.info("Создание вакансии.");
-        User user = userMapper.toEntity(userService.findUserById(employerId));
+    public String addVacancy(@RequestParam String title,
+                             @RequestParam String description,
+                             @RequestParam String location,
+                             @RequestParam float salary,
+                             @RequestParam Long employerId) {
+        Optional<User> optionalUser = userRepository.findById(employerId);
+        if (optionalUser.isEmpty()) return "error";
+        User user = optionalUser.get();
 
-        vacancyService.create(title, description, location, salary, userMapper.toDTO(user));
-        logger.info("Вакансия успешно создана.");
+        logger.info("Создаем вакансию: title={}, empId={}", title, employerId);
+        vacancyService.create(title, description, location, salary, user);
         return "redirect:/vacancies/my";
     }
 
@@ -69,14 +77,14 @@ public class VacancyController {
     public String showEmployerVacancies(Model model, Principal principal) {
         if (principal == null) {
             logger.error("Попытка доступа к защищенному ресурсу без аутентификации.");
-            return "error";  // добавьте страницу error
+            return "error";
         }
 
         try {
             UserDTO user = userService.findByEmail(principal.getName());
             if (user == null) {
                 logger.error("Пользователь с email {} не найден", principal.getName());
-                return "error";  // добавьте страницу error
+                return "error";
             }
 
             logger.info("Пользователь {} пытается получить доступ к своим вакансиям.", principal.getName());
@@ -88,10 +96,10 @@ public class VacancyController {
             }
 
             model.addAttribute("myVacancies", myVacancies);
-            return "employer-vacancy-list";  // проверьте, что этот шаблон готов к работе
+            return "employer-vacancy-list";
         } catch (Exception e) {
             logger.error("Ошибка при получении списка вакансий: {}", e.getMessage(), e);
-            return "error";  // добавьте страницу error
+            return "error";
         }
     }
 
@@ -104,53 +112,97 @@ public class VacancyController {
     }
 
     @GetMapping("/vacancy-edit/{id}")
-    @PreAuthorize("hasRole('ADMIN') or (authentication.principal.username == #username and #vacancy.employer.id == authentication.principal.id)")
     public String showEditVacancy(@PathVariable Long id, Model model, Principal principal) {
         logger.info("Запрос на редактирование вакансии с ID: {}", id);
-        UserDTO user = userService.findByEmail(principal.getName());
-        if (user != null) {
-            VacancyDTO vacancyDTO = vacancyMapper.toDTO(vacancyService.findVacancyById(id));
 
-            if (vacancyDTO != null && vacancyDTO.getEmployer().getId().equals(user.getId())) {
-                model.addAttribute("user", user);
-                model.addAttribute("vacancy", vacancyDTO);
-                return "vacancy-edit";
-            } else {
-                logger.error("Вакансия с ID {} не найдена или не принадлежит пользователю.", id);
-                return "error";
-            }
-        }else{
+        UserDTO user = userService.findByEmail(principal.getName());
+        if (user == null) {
             logger.error("Пользователь не найден.");
             return "error";
         }
-    }
 
-    @PreAuthorize("hasRole('ADMIN') or (authentication.principal.username == #vacancyDTO.employer.email)")
-    @PostMapping("/vacancy-edit")
-    public String editVacancy(@ModelAttribute VacancyDTO vacancyDTO) {
-        Long vacancyId = vacancyDTO.getId();
-        vacancyService.edit(vacancyId,  vacancyDTO); //сделать чтобы доступ был только у создателя вакансии и админа
-        logger.info("Данные вакансии успешно обновлены.");
-        return "redirect:/vacancy-list";
-    }
-
-    @PreAuthorize("hasRole('ADMIN') or (authentication.principal.username == #username and #vacancy.employer.id == authentication.principal.id)")
-    @PostMapping("delete-vacancy")
-    public String deleteVacancy(@RequestParam Long id) {
-        vacancyService.delete(id); //сделать чтобы доступ был только у создателя вакансии и админа
-        logger.info("Вакансия успешно удалена.");
-        return "redirect:/vacancy-list";
-    }
-
-    @GetMapping("/vacancy-view/{id}")
-    public String viewVacancy(Model model, @PathVariable Long id) {
         VacancyDTO vacancyDTO = vacancyMapper.toDTO(vacancyService.findVacancyById(id));
+        if (vacancyDTO == null) {
+            logger.error("Вакансия с id={} не найдена", id);
+            return "error";
+        }
+
+        boolean isAdmin = user.getUserTypes().stream()
+                .anyMatch(r -> "ROLE_ADMIN".equals(r.getTypeString()));
+        boolean isOwner = false;
+
+        if (vacancyDTO.getEmployer() != null) {
+            Long employerId = vacancyDTO.getEmployer().getId();
+            isOwner = employerId != null && employerId.equals(user.getId());
+        }
+        if (!isAdmin && !isOwner) {
+            logger.warn("Доступ запрещён: пользователь {} не является админом или владельцем вакансии id={}", user.getId(), id);
+            return "error";
+        }
+        model.addAttribute("user", user);
+        model.addAttribute("vacancy", vacancyDTO);
+        return "vacancy-edit";
+    }
+
+    @PostMapping("/vacancy-edit")
+    public String editVacancy(@ModelAttribute("vacancy") VacancyDTO vacancyDTO, @RequestParam("employer.id") Long employerId, Principal principal) {
+        UserDTO currentUser = userService.findByEmail(principal.getName());
+        UserDTO employerUser = userService.findUserById(employerId);
+
+        boolean isAdmin = currentUser.getUserTypes().stream()
+                .anyMatch(r -> r.getTypeString().equals("ROLE_ADMIN"));
+        boolean isOwner = employerUser.getEmail().equals(currentUser.getEmail());
+
+        if (!isAdmin && !isOwner) return "error";
+        Long vacancyId = vacancyDTO.getId();
+        vacancyService.edit(vacancyId, vacancyDTO, employerUser);
+        return "redirect:/vacancies/my";
+    }
+
+    @PostMapping("/delete-vacancy")
+    public String deleteVacancy(@RequestParam Long id, Authentication authentication) throws AccessDeniedException {
+        Vacancy vacancy = vacancyService.findVacancyById(id);
+        if (vacancy == null) return "error";
+
+        String currentUsername = authentication.getName();
+
+        if (!(authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))
+                || currentUsername.equals(vacancy.getEmployer().getEmail())))
+        {
+            throw new AccessDeniedException("Нет прав");
+        }
+
+        vacancyService.delete(id);
+        return "redirect:/vacancies/my";
+    }
+
+    @GetMapping("/user-vacancy-view/{id}")
+    public String viewUserVacancy(Model model, @PathVariable Long id) {
+        VacancyDTO vacancyDTO = vacancyMapper.toDTO(vacancyService.findVacancyById(id));
+        UserDTO employer = userService.findUserById(vacancyDTO.getEmployer().getId());
         if(vacancyDTO != null) {
             model.addAttribute("vacancy", vacancyDTO);
-            return "vacancy-view";
-        }else{
+            model.addAttribute("employer", employer);
+            return "user-vacancy-view";  // возврат имени шаблона
+        } else {
             logger.error("Вакансии с id: {} не найдено", id);
             return "error";
         }
+    }
+
+    @GetMapping("/employer-vacancy-view/{id}")
+    public String viewEmployerVacancy(Model model, @PathVariable Long id) {
+        Vacancy vacancy = vacancyService.findVacancyById(id);
+        if (vacancy == null) {
+            logger.error("Вакансии с id: {} не найдено", id);
+            return "error";
+        }
+        VacancyDTO vacancyDTO = vacancyMapper.toDTO(vacancy);
+        UserDTO employer = userService.findUserById(vacancyDTO.getEmployer().getId());
+
+        model.addAttribute("vacancy", vacancyDTO);
+        model.addAttribute("employer", employer);
+        return "employer-vacancy-view";
     }
 }

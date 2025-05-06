@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import org.example.DTO.UserDTO;
 import org.example.Enum.UserTypeEnum;
 import org.example.Model.User;
+import org.example.Model.UserType;
 import org.example.Service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -61,31 +64,36 @@ public class AuthController {
         logger.info("Email: {}", email);
         logger.info("Пароль: {}", password);
 
-        // Проверка на пустые поля
         if (email == null || email.isEmpty()) {
             logger.error("Email не указан!");
             model.addAttribute("errorMessage", "Неверное имя пользователя или пароль.");
-            return "login"; // вернуться на страницу логина
+            return "login";
         }
 
         if (password == null || password.isEmpty()) {
             logger.error("Пароль не был предоставлен!");
             model.addAttribute("errorMessage", "Пароль не может быть пустым");
-            return "login"; // вернуться на страницу логина
+            return "login";
         }
 
-        // Попытка аутентификации
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            SecurityContextHolder.getContext().setAuthentication(authentication); // **Устанавливаем аутентификацию**
             logger.info("Пользователь с email {} успешно вошел в систему.", email);
+
             UserDTO user = userService.findByEmail(email);
 
-            // Проверить, если user не null и вывести его типы
             if (user != null && user.getUserTypes() != null) {
+
+                for (UserType ut : user.getUserTypes()) {
+                    logger.info("Роль пользователя: {}", ut.getType());
+                }
+
                 boolean isEmployer = user.getUserTypes().stream()
-                        .anyMatch(userType -> userType.getType().equals(UserTypeEnum.EMPLOYER));
+                        .anyMatch(ut -> ut.getType() == UserTypeEnum.EMPLOYER);
                 logger.info("Пользователь является работодателем: {}", isEmployer);
-                return isEmployer ? "redirect:/users/employer-profile" : "redirect:/users/user-profile"; // перенаправление в зависимости от типа
+
+                return isEmployer ? "redirect:/users/employer-profile" : "redirect:/users/user-profile";
             } else {
                 logger.error("Пользователь не найден или не имеет типов.");
                 model.addAttribute("errorMessage", "Пользователь не найден.");

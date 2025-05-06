@@ -105,9 +105,10 @@
   <br>
   <a class="btn btn-info" href="/resume-list">Список резюме</a>
   <br>
-  <a th:href="${user.userTypes != null && user.userTypes.contains(employerType) ? '/vacancies/my' : '/vacancies/all'}">
-    Смотреть вакансии
-  </a>
+  <a class="btn btn-info" href="/vacancies/all">Смотреть вакансии</a>
+  <br>
+  <hr>
+  <a class="btn btn-info" href="/auth/login">Выйти</a>
 
   <div id="edit-form" style="display: none;">
     <h2>Редактировать профиль</h2>
