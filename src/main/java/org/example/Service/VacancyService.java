@@ -70,7 +70,7 @@ public class VacancyService {
         }else
             logger.error("Вакансия не найдена.");
     }
-
+//не используется
     public String getDetails(Long vacancyId) {
         Optional<Vacancy> vacancy = vacancyRepository.findById(vacancyId);
         return vacancy.get().getTitle() + "\n" +
@@ -89,5 +89,9 @@ public class VacancyService {
         List<Vacancy> vacancies = vacancyRepository.findByEmployerId(employerId);
         logger.info("Найденные вакансии: {}", vacancies);
         return vacancies;
+    }
+
+    public List<Vacancy> findByTitleContainingIgnoreCase(String title) {
+        return vacancyRepository.findByTitleContainingIgnoreCase(title);
     }
 }

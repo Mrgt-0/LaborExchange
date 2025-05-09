@@ -52,8 +52,27 @@
         <span th:text="${employer.email}">Email работодателя</span>
         <br/>
     </p>
-    <hr>
+    <button id="applyBtn" class="btn btn-success">Откликнуться</button>
+    <br><br>
     <a href="/vacancies/all" class="btn btn-primary">Вернуться к списку вакансий</a>
+
+    <!-- Скрипт вызова API -->
+    <script>
+        document.getElementById('applyBtn').addEventListener('click', function() {
+            fetch('/applications/submit?vacancyId=[[${vacancy.id}]]', {
+                method: 'POST',
+                credentials: 'include'
+            }).then(res => {
+                if (res.ok) {
+                    alert('Вы успешно откликнулись!');
+                } else {
+                    alert('Ошибка при отклике.');
+                }
+            }).catch(err => {
+                alert('Ошибка сети.');
+            });
+        });
+    </script>
 </div>
 </body>
 </html>

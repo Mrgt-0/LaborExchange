@@ -6,6 +6,7 @@ import org.example.DTO.ResumeDTO;
 import org.example.DTO.UserDTO;
 import org.example.Mapper.ResumeMapper;
 import org.example.Model.Resume;
+import org.example.Model.Vacancy;
 import org.example.Repository.ResumeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,7 @@ public class ResumeService {
         }else
             logger.info("Резюме не найдено.");
     }
-
+//не используется
     public String getSummary(Long id) throws SystemException {
         Optional<Resume> resume = resumeRepository.findById(id);
         UserDTO user = userService.findUserById(resume.get().getUserId());
@@ -81,5 +82,11 @@ public class ResumeService {
 
     public ResumeDTO findResumeById(Long id) throws SystemException {
         return resumeMapper.toDTO(resumeRepository.findById(id).get());
+    }
+
+    public List<Resume> getAllResumes() throws SystemException { return resumeRepository.findAll(); }
+
+    public List<Resume> findByTitleContainingIgnoreCase(String title) {
+        return resumeRepository.findByTitleContainingIgnoreCase(title);
     }
 }

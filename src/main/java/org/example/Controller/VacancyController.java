@@ -105,9 +105,15 @@ public class VacancyController {
 
     // Страница для обычных пользователей для просмотра всех вакансий
     @GetMapping("/all")
-    public String showAllVacancies(Model model) {
-        List<Vacancy> vacancies = vacancyService.getAllVacancies();
+    public String showAllVacancies(@RequestParam(required = false) String title, Model model) {
+        List<Vacancy> vacancies;
+        if (title == null || title.isBlank())
+            vacancies = vacancyService.getAllVacancies();
+        else
+            vacancies = vacancyService.findByTitleContainingIgnoreCase(title);
+
         model.addAttribute("vacancies", vacancies);
+        model.addAttribute("searchTitle", title); // чтобы сохранить значение в форме
         return "all-vacancy-list";
     }
 

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Мои отклики</title>
+</head>
+<body>
+<div class="container mt-4">
+    <h1>Мои отклики</h1>
+    <table class="table" id="applicationsTable">
+        <thead>
+        <tr>
+            <th>Статус</th>
+            <th>Вакансия</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <script>
+        async function loadApplications() {
+            try {
+                const response = await fetch('/applications/my', {credentials: 'include'});
+                if (!response.ok) throw new Error('Ошибка загрузки данных');
+
+                const applications = await response.json();
+                const tbody = document.querySelector('#applicationsTable tbody');
+                tbody.innerHTML = '';
+
+                if (applications.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="text-center">Отклики не найдены</td></tr>`;
+                    return;
+                }
+
+                const statusMap = {
+                    PENDING: 'Ожидает обработки',
+                    ACCEPTED: 'Принят',
+                    REJECTED: 'Отклонён',
+                    WITHDRAWN: 'Отозван',
+                };
+
+                applications.forEach(app => {
+                    const tr = document.createElement('tr');
+
+                    const tdStatus = document.createElement('td');
+                    tdStatus.textContent = statusMap[app.status] || app.status || 'Н/Д';
+                    tr.appendChild(tdStatus);
+
+                    const tdVacancy = document.createElement('td');
+                    const vacancyData = app.vacancy || {};
+                    const vacancyId = vacancyData.id || app.vacancyId;
+                    const title = vacancyData.title || app.vacancyTitle || 'Перейти к вакансии';
+
+                    if (vacancyId) {
+                        const a = document.createElement('a');
+                        a.textContent = title;
+                        a.href = `/vacancies/user-vacancy-view/${vacancyId}`;
+                        a.style.textDecoration = 'none';
+                        a.style.color = 'blue';
+                        tdVacancy.appendChild(a);
+                    } else {
+                        tdVacancy.textContent = title;
+                    }
+                    tr.appendChild(tdVacancy);
+
+                    const tdActions = document.createElement('td');
+                    if (app.status === 'PENDING') {
+                        const btnWithdraw = document.createElement('button');
+                        btnWithdraw.className = 'btn btn-warning btn-sm';
+                        btnWithdraw.textContent = 'Отозвать';
+                        btnWithdraw.onclick = () => withdrawApplication(app.id);
+                        tdActions.appendChild(btnWithdraw);
+                    } else {
+                        tdActions.textContent = '-';
+                    }
+                    tr.appendChild(tdActions);
+
+                    tbody.appendChild(tr);
+                });
+            } catch (e) {
+                alert(e.message);
+            }
+        }
+        async function withdrawApplication(applicationId) {
+            if (!confirm('Вы уверены, что хотите отозвать отклик?')) return;
+            try {
+                const response = await fetch('/applications/' + applicationId + '/withdraw', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    alert('Отклик успешно отозван');
+                    await loadApplications();
+                } else {
+                    alert('Ошибка при отзыве отклика');
+                }
+            } catch (e) {
+                alert('Сетевая ошибка');
+            }
+        }
+        document.addEventListener('DOMContentLoaded', loadApplications);
+    </script>
+</div>

@@ -52,13 +52,13 @@
         <tr th:each="resume : ${resumes}">
             <td th:text="${resume.title}"></td>
             <td>
-                <form action="/delete-resume" method="post" style="display:inline;">
+                <form action="/resumes/delete-resume" method="post" style="display:inline;">
                     <input type="hidden" name="id" th:value="${resume.id}" />
                     <button type="submit" class="btn btn-danger" onclick="return confirmDelete();">Удалить</button>
                 </form>
                 </form>
-                <a class="btn btn-warning" th:href="@{/resume-edit/{id}(id=${resume.id})}">Редактировать</a>
-                <a class="btn btn-info" th:href="@{/resume-summary/{id}(id=${resume.id})}">Просмотреть</a>
+                <a class="btn btn-warning" th:href="@{/resumes/resume-edit/{id}(id=${resume.id})}">Редактировать</a>
+                <a class="btn btn-info" th:href="@{/resumes/user-resume-summary/{id}(id=${resume.id})}">Просмотреть</a>
             </td>
         </tr>
         <tr th:if="${#lists.isEmpty(resumes)}">
@@ -66,7 +66,10 @@
         </tr>
         </tbody>
     </table>
-    <a href="/resume-add" class="btn btn-primary">Создать новое резюме</a>
+    <a href="/resumes/resume-add" class="btn btn-primary">Создать новое резюме</a>
+    <br>
+    <br>
+    <a href="/users/user-profile" class="btn btn-primary">На главную</a>
 </div>
 </body>
 </html>

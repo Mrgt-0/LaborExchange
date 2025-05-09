@@ -36,7 +36,7 @@
 <body>
 <div class="container">
   <h1>Создайте ваше резюме</h1>
-  <form th:action="@{/resume-add}" method="post">
+  <form th:action="@{/resumes/resume-add}" method="post">
     <input type="hidden" name="userId" th:value="${user.id}"/>
     <div class="form-group">
       <label for="title">Название резюме:</label>
@@ -56,7 +56,7 @@
     </div>
     <button type="submit" class="btn btn-primary">Создать резюме</button>
   </form>
-  <a href="/resume-list">Назад к резюме</a>
+  <a href="/resumes/resume-list">Назад к резюме</a>
 </div>
 </body>
 </html>

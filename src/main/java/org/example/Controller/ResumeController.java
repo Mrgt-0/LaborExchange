@@ -4,6 +4,7 @@ import jakarta.transaction.SystemException;
 import org.example.DTO.ResumeDTO;
 import org.example.DTO.UserDTO;
 import org.example.Mapper.ResumeMapper;
+import org.example.Model.Resume;
 import org.example.Service.ResumeService;
 import org.example.Service.UserService;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ import java.security.Principal;
 import java.util.List;
 
 @Controller
-@RequestMapping
+@RequestMapping("/resumes")
 public class ResumeController {
     private static final Logger logger = LoggerFactory.getLogger(ResumeController.class);
 
@@ -66,7 +67,7 @@ public class ResumeController {
 
         resumeService.upload(userId, title, skills, experience, education);
         logger.info("Резюме успешно опубликовано.");
-        return "redirect:/resume-list";
+        return "redirect:/resumes/resume-list";
     }
 
     @GetMapping("resume-edit/{id}")
@@ -94,24 +95,48 @@ public class ResumeController {
     public String updateResume(@RequestParam Long resumeId, @ModelAttribute ResumeDTO resumeDTO) throws SystemException {
         resumeService.update(resumeId, resumeDTO);
         logger.info("Данные резюме успешно обновлены.");
-        return "redirect:/resume-list";
+        return "redirect:/resumes/resume-list";
     }
 
-    @GetMapping("/resume-summary/{id}")
-    public String viewResume(@PathVariable Long id, Model model) throws SystemException {
+    @GetMapping("/user-resume-summary/{id}")
+    public String viewUserResume(@PathVariable Long id, Model model) throws SystemException {
         ResumeDTO resume = resumeService.findResumeById(id);
         if (resume != null) {
             model.addAttribute("resume", resume);
-            return "resume-summary";
+            return "user-resume-summary";
         } else {
-            return "redirect:/resume-list";
+            return "redirect:/resumes/resume-list";
         }
+    }
+
+    @GetMapping("/employer-resume-summary/{id}")
+    public String viewEmployerResume(@PathVariable Long id, Model model) throws SystemException {
+        ResumeDTO resume = resumeService.findResumeById(id);
+        if (resume != null) {
+            model.addAttribute("resume", resume);
+            return "employer-resume-summary";
+        } else {
+            return "redirect:/resumes/all";
+        }
+    }
+
+    @GetMapping("/all")
+    public String showAllResumes(@RequestParam(required = false) String title, Model model) throws SystemException {
+        List<Resume> resumes;
+        if (title == null || title.isBlank())
+            resumes = resumeService.getAllResumes();
+        else
+            resumes = resumeService.findByTitleContainingIgnoreCase(title);
+
+        model.addAttribute("resumes", resumes);
+        model.addAttribute("searchTitle", title);
+        return "all-resume-list";
     }
 
     @PostMapping("/delete-resume")
     public String deleteResume(@RequestParam Long id) throws SystemException {
         resumeService.delete(id);
         logger.info("Резюме успешно удалено.");
-        return "redirect:/resume-list";
+        return "redirect:/resumes/resume-list";
     }
 }

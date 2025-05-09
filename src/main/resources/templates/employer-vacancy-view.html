@@ -37,19 +37,14 @@
 <div class="container">
   <h1 th:text="${vacancy.title}">Название</h1>
 
-  <!-- Описание -->
   <h3>Описание:</h3>
   <p th:text="${vacancy.description}">Описание</p>
 
-  <!-- Местоположение -->
   <h3>Местоположение:</h3>
   <p th:text="${vacancy.location}">Местоположение</p>
 
-  <!-- Зарплата -->
   <h3>Зарплата:</h3>
   <p th:text="${vacancy.salary}">Зарплата</p>
-
-  <a th:href="@{/some-path(id=${vacancy.id})}">Подробнее</a>
 
   <h3>Работодатель:</h3>
   <p>
@@ -59,6 +54,7 @@
     <br/>
   </p>
   <hr>
+
   <a href="/vacancies/all" class="btn btn-primary">Вернуться к списку вакансий</a>
 
   <form method="post" th:action="@{/vacancies/delete-vacancy}" style="display:inline;"

@@ -61,38 +61,29 @@ public class AuthController {
 
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public String login(@RequestParam String email, @RequestParam String password, Model model) {
-        logger.info("Email: {}", email);
-        logger.info("Пароль: {}", password);
-
         if (email == null || email.isEmpty()) {
             logger.error("Email не указан!");
             model.addAttribute("errorMessage", "Неверное имя пользователя или пароль.");
             return "login";
         }
-
         if (password == null || password.isEmpty()) {
             logger.error("Пароль не был предоставлен!");
             model.addAttribute("errorMessage", "Пароль не может быть пустым");
             return "login";
         }
-
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
             SecurityContextHolder.getContext().setAuthentication(authentication); // **Устанавливаем аутентификацию**
             logger.info("Пользователь с email {} успешно вошел в систему.", email);
-
             UserDTO user = userService.findByEmail(email);
-
             if (user != null && user.getUserTypes() != null) {
 
                 for (UserType ut : user.getUserTypes()) {
                     logger.info("Роль пользователя: {}", ut.getType());
                 }
-
                 boolean isEmployer = user.getUserTypes().stream()
                         .anyMatch(ut -> ut.getType() == UserTypeEnum.EMPLOYER);
                 logger.info("Пользователь является работодателем: {}", isEmployer);
-
                 return isEmployer ? "redirect:/users/employer-profile" : "redirect:/users/user-profile";
             } else {
                 logger.error("Пользователь не найден или не имеет типов.");

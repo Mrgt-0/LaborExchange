@@ -68,6 +68,10 @@
         button:hover {
             background-color: #2980b9;
         }
+        .btn-xs {
+            padding: 0.15rem 0.5rem;
+            font-size: 0.8rem;
+        }
 
         .error-message {
             color: red;
@@ -94,6 +98,15 @@
 <body>
 <div class="container">
     <h1>Список вакансий</h1>
+    <form th:action="@{/vacancies/all}" method="get" class="form-inline mb-3">
+        <label>
+            <input type="text" name="title" placeholder="Поиск по названию" class="form-control mr-2" style="width: 500px;" th:value="${searchTitle}">
+        </label>
+        <button type="submit" class="btn btn-primary btn-sm"
+                style="width: 150px;">Поиск</button>
+        <a th:href="@{/vacancies/all}" class="btn btn-primary btn-sm ml-2"
+           style="width: 150px; display: inline-block; text-align: center;">Сбросить</a>
+    </form>
 
     <table class="table">
         <thead>
@@ -113,17 +126,17 @@
             </td>
         </tr>
         <tr th:if="${#lists.isEmpty(vacancies)}">
-            <td colspan="7" class="text-center">Вакансии не найдены.</td>
+            <td colspan="3" class="text-center">Вакансии не найдены.</td>
         </tr>
-        <br>
+    </table>
+    <div class="mt-3">
         <th:block th:if="${#authentication.authorities.?[authority == 'ROLE_EMPLOYER'].size() > 0}">
-            <a href="/users/employer-profile">На главную</a>
+            <a th:href="@{/users/employer-profile}" class="btn btn-primary">На главную</a>
         </th:block>
         <th:block th:unless="${#authentication.authorities.?[authority == 'ROLE_EMPLOYER'].size() > 0}">
-            <a href="/users/user-profile">На главную</a>
+            <a th:href="@{/users/user-profile}" class="btn btn-primary">На главную</a>
         </th:block>
-        </tbody>
-    </table>
+    </div>
 </div>
 </body>
 </html>

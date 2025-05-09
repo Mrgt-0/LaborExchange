@@ -1,28 +1,19 @@
-package org.example.Model;
+package org.example.DTO;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import org.example.Enum.ApplicationStatus;
 
-@Entity
-@Table(name = "applications")
-public class Application {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ApplicationDTO {
     private long id;
-
-    @Column(name = "user_id")
     private Long userId;
-
-    @Column(name = "vacancy_id")
     private Long vacancyId;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private ApplicationStatus status;
 
-    public Application() {}
+    public ApplicationDTO() {}
 
-    public Application(Long userId, Long vacancyId) {
+    public ApplicationDTO(Long userId, Long vacancyId) {
         this.userId = userId;
         this.vacancyId = vacancyId;
         this.status = ApplicationStatus.PENDING;
@@ -39,7 +30,7 @@ public class Application {
 
     public ApplicationStatus getStatus() { return status; }
     public void setStatus(ApplicationStatus status) { this.status = status; }
-    // Метод подачи отклика
+
     public void submit() {
         this.status = ApplicationStatus.PENDING;
     }

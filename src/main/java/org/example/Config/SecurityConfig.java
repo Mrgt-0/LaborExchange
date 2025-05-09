@@ -31,9 +31,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login", "/auth/register").permitAll()
-                        .requestMatchers("/users/user-profile", "/vacancies/all", "resume-add", "/resume-list",
-                                "/resume-edit").authenticated()
-                        .requestMatchers( "/vacancies/my", "/vacancies/delete-vacancy", "/vacancies/vacancy-edit").hasRole("EMPLOYER")
+                        .requestMatchers("/users/user-profile", "/vacancies/all", "resumes/resume-add", "/resumes/resume-list",
+                                "/resumes/resume-edit", "applications/my-applications").authenticated()
+                        .requestMatchers( "/vacancies/my", "/vacancies/delete-vacancy", "/vacancies/vacancy-edit", "resumes/all").hasRole("EMPLOYER")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
