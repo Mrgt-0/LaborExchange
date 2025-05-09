@@ -1,5 +1,6 @@
 package org.example.Service;
 
+import jakarta.transaction.Transactional;
 import org.example.DTO.ApplicationDTO;
 import org.example.DTO.ApplicationViewDTO;
 import org.example.Enum.ApplicationStatus;
@@ -25,16 +26,21 @@ public class ApplicationService {
 
     @Autowired
     private VacancyRepository vacancyRepository;
+
     // Подать новый отклик
-    public ApplicationDTO submitApplication(Long userId, Long vacancyId) {
-        // Проверка наличия уже отклика от того же пользователя на эту вакансию
-        Optional<Application> existing = applicationRepository.findByUserIdAndVacancyId(userId, vacancyId);
-        if (existing.isPresent()) {
+    @Transactional
+    public void submitApplication(Long userId, Long vacancyId) {
+        Optional<Application> existingApplication = applicationRepository.findByUserIdAndVacancyId(userId, vacancyId);
+
+        if (existingApplication.stream().anyMatch(app -> app.getStatus() != ApplicationStatus.WITHDRAWN)) {
             throw new IllegalStateException("Вы уже подали отклик на эту вакансию");
         }
-        Application application = new Application(userId, vacancyId);
-        application.submit();
-        return applicationMapper.toDTO(applicationRepository.save(application));
+        Application application = new Application();
+        application.setUserId(userId);
+        application.setVacancyId(vacancyId);
+        application.setStatus(ApplicationStatus.PENDING);
+
+        applicationRepository.save(application);
     }
 
     // Отозвать отклик

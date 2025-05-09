@@ -32,13 +32,14 @@ public class Application {
     public void setId(long id) { this.id = id; }
 
     public Long getUserId() { return userId; }
-    public void setUser(Long userId) { this.userId = userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 
     public Long getVacancyId() { return vacancyId; }
     public void setVacancyId(Long vacancyId) { this.vacancyId = vacancyId; }
 
     public ApplicationStatus getStatus() { return status; }
     public void setStatus(ApplicationStatus status) { this.status = status; }
+
     // Метод подачи отклика
     public void submit() {
         this.status = ApplicationStatus.PENDING;

@@ -3,7 +3,9 @@ package org.example.Controller;
 import org.example.DTO.UserDTO;
 import org.example.Service.ApplicationService;
 import org.example.Service.UserService;
+import org.hibernate.StaleObjectStateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -39,8 +41,12 @@ public class ApplicationController {
     @PostMapping("/submit")
     public ResponseEntity<?> submit(@RequestParam Long vacancyId, Principal principal) {
         Long userId = getUserIdFromPrincipal(principal);
-        applicationService.submitApplication(userId, vacancyId);
-        return ResponseEntity.ok().body("Отклик отправлен");
+        try {
+            applicationService.submitApplication(userId, vacancyId);
+            return ResponseEntity.ok().body("Отклик отправлен");
+        } catch (StaleObjectStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 
     @PostMapping("/{applicationId}/withdraw")

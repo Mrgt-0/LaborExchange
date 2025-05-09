@@ -9,6 +9,7 @@
 <body>
 <div class="container mt-4">
     <h1>Мои отклики</h1>
+    <div id="errorMessage"></div>
     <table class="table" id="applicationsTable">
         <thead>
         <tr>
@@ -20,7 +21,20 @@
         <tbody></tbody>
     </table>
     <script>
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        // Функция скрытия ошибки
+        function hideError() {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.style.display = 'none';
+        }
+
         async function loadApplications() {
+            hideError(); // Скрываем ошибку при загрузке данных
             try {
                 const response = await fetch('/applications/my', {credentials: 'include'});
                 if (!response.ok) throw new Error('Ошибка загрузки данных');
@@ -30,7 +44,7 @@
                 tbody.innerHTML = '';
 
                 if (applications.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="text-center">Отклики не найдены</td></tr>`;
+                    tbody.innerHTML = '<tr><td colspan="3" class="text-center">Отклики не найдены</td></tr>';
                     return;
                 }
 
@@ -45,7 +59,7 @@
                     const tr = document.createElement('tr');
 
                     const tdStatus = document.createElement('td');
-                    tdStatus.textContent = statusMap[app.status] || app.status || 'Н/Д';
+                    tdStatus.textContent = statusMap[app.status] || 'Перейти к вакансии';
                     tr.appendChild(tdStatus);
 
                     const tdVacancy = document.createElement('td');
@@ -80,24 +94,27 @@
                     tbody.appendChild(tr);
                 });
             } catch (e) {
-                alert(e.message);
+                showError(e.message || 'Произошла ошибка при загрузке данных');
             }
         }
+
         async function withdrawApplication(applicationId) {
             if (!confirm('Вы уверены, что хотите отозвать отклик?')) return;
+            hideError();
             try {
                 const response = await fetch('/applications/' + applicationId + '/withdraw', {
                     method: 'POST',
                     credentials: 'include'
                 });
                 if (response.ok) {
-                    alert('Отклик успешно отозван');
+                    // Можно получить сообщение из тела ответа, если нужно
                     await loadApplications();
                 } else {
-                    alert('Ошибка при отзыве отклика');
+                    const errorText = await response.text();
+                    showError('Ошибка при отзыве отклика: ' + errorText);
                 }
             } catch (e) {
-                alert('Сетевая ошибка');
+                showError('Сетевая ошибка: ' + e.message);
             }
         }
         document.addEventListener('DOMContentLoaded', loadApplications);
