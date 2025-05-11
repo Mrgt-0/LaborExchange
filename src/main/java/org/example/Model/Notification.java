@@ -1,6 +1,7 @@
 package org.example.Model;
 
 import jakarta.persistence.*;
+import org.example.Enum.ReadStatus;
 
 @Entity
 @Table(name = "notifications")
@@ -8,31 +9,39 @@ public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    private User user;
-
+    @Column(name = "userId")
+    private Long userId;
     private String message;
-    private boolean readStatus;
+
+    private Long vacancyId;
+    private String vacancyTitle;
 
     public Notification() {}
 
-    public Notification(User user, String message, boolean readStatus) {
-        this.user = user;
-        this.message = message;
-        this.readStatus = readStatus;
+    public Long getNotificationId() {
+        return id;
+    }
+    public void setNotificationId(Long id) {
+        this.id = id;
     }
 
-    public long getId() { return id; }
-    public void setId(long id) { this.id = id; }
+    public Long getUserId() {
+        return userId;
+    }
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public String getMessage() {
+        return message;
+    }
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
+    public Long getVacancyId() { return vacancyId; }
+    public void setVacancyId(Long vacancyId) { this.vacancyId = vacancyId; }
 
-    public boolean isReadStatus() { return readStatus; }
-    public void setReadStatus(boolean readStatus) { this.readStatus = readStatus; }
+    public String getVacancyTitle() { return vacancyTitle; }
+    public void setVacancyTitle(String vacancyTitle) {}
 }

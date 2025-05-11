@@ -4,108 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Список вакансий</title>
+
     <style>
         body {
             font-family: 'Open Sans', sans-serif;
-            background: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            background-color: #f4f4f4;
             margin: 0;
+            padding: 20px; /* Добавим отступ */
         }
 
-        .login-block {
-            background: white;
-            padding: 40px;
+        .container {
+            background-color: white;
+            padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 400px;
-            text-align: center;
-        }
-
-        .login-block img {
-            width: 100px;
-            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px; /* Ограничиваем ширину контейнера */
+            margin: auto; /* Центруем контейнер */
         }
 
         h1 {
-            font-size: 24px;
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-inline {
             margin-bottom: 20px;
         }
 
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: 500;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        select {
-            width: 100%;
+        .form-control {
             padding: 10px;
-            margin-bottom: 20px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 14px;
+            width: 500px; /* Высота текстового поля */
+            font-size: 16px; /* Размер шрифта */
         }
 
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #3498db;
-            color: white;
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
             border: none;
             border-radius: 4px;
-            font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s;
+            text-decoration: none; /* Убираем подчеркивание у ссылок */
         }
 
-        button:hover {
-            background-color: #2980b9;
-        }
-        .btn-xs {
-            padding: 0.15rem 0.5rem;
-            font-size: 0.8rem;
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
         }
 
-        .error-message {
-            color: red;
-            margin-top: 10px;
+        .btn-primary:hover {
+            background-color: #2980b9; /* Цвет кнопки при наведении */
         }
 
-        .login-links {
-            margin-top: 20px;
-            font-size: 14px;
+        .table {
+            width: 100%;
+            border-collapse: collapse; /* Убираем двойные границы */
+            margin-bottom: 20px;
         }
 
-        .login-links a {
-            color: #3498db;
-            text-decoration: none;
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd; /* Обводка ячеек */
         }
 
-        .login-links a:hover {
-            text-decoration: underline;
+        .table th {
+            background-color: #f8f9fa; /* Фоновый цвет заголовков */
+        }
+
+        .text-center {
+            text-align: center; /* Центрирование текста */
+        }
+
+        .mt-3 {
+            margin-top: 20px; /* Отступ сверху */
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/app.min.css">
-    <link rel="stylesheet" href="/assets/css/custom.css">
 </head>
 <body>
 <div class="container">
     <h1>Список вакансий</h1>
     <form th:action="@{/vacancies/all}" method="get" class="form-inline mb-3">
         <label>
-            <input type="text" name="title" placeholder="Поиск по названию" class="form-control mr-2" style="width: 500px;" th:value="${searchTitle}">
+            <input type="text" name="title" placeholder="Поиск по названию" class="form-control" th:value="${searchTitle}">
         </label>
-        <button type="submit" class="btn btn-primary btn-sm"
-                style="width: 150px;">Поиск</button>
-        <a th:href="@{/vacancies/all}" class="btn btn-primary btn-sm ml-2"
-           style="width: 150px; display: inline-block; text-align: center;">Сбросить</a>
+        <button type="submit" class="btn btn-primary">Поиск</button>
+        <a th:href="@{/vacancies/all}" class="btn btn-primary ml-2">Сбросить</a>
     </form>
 
     <table class="table">
@@ -121,14 +108,20 @@
             <td th:text="${vacancy.title}"></td>
             <td th:text="${vacancy.salary}"></td>
             <td>
-                <a th:href="@{/vacancies/user-vacancy-view/{id}(id=${vacancy.id})}" class="btn btn-info">Просмотреть</a>
-                <input type="hidden" name="employer.id" th:value="${vacancy.employer.id}"/>
+                <th:block th:if="${#authentication.authorities.?[authority == 'ROLE_EMPLOYER'].size() > 0}">
+                    <a th:href="@{/vacancies/employer-vacancy-view/{id}(id=${vacancy.id})}" class="btn btn-primary">Посмотреть</a>
+                </th:block>
+                <th:block th:unless="${#authentication.authorities.?[authority == 'ROLE_EMPLOYER'].size() > 0}">
+                    <a th:href="@{/vacancies/user-vacancy-view/{id}(id=${vacancy.id})}" class="btn btn-primary">Посмотреть</a>
+                </th:block>
             </td>
         </tr>
         <tr th:if="${#lists.isEmpty(vacancies)}">
             <td colspan="3" class="text-center">Вакансии не найдены.</td>
         </tr>
+        </tbody>
     </table>
+
     <div class="mt-3">
         <th:block th:if="${#authentication.authorities.?[authority == 'ROLE_EMPLOYER'].size() > 0}">
             <a th:href="@{/users/employer-profile}" class="btn btn-primary">На главную</a>

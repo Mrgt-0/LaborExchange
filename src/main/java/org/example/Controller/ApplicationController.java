@@ -1,5 +1,6 @@
 package org.example.Controller;
 
+import org.example.DTO.ApplicationViewDTO;
 import org.example.DTO.UserDTO;
 import org.example.Service.ApplicationService;
 import org.example.Service.UserService;
@@ -8,12 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
-@RequestMapping("/applications")
+@RequestMapping("/users/applications")
 public class ApplicationController {
     @Autowired
     private ApplicationService applicationService;
@@ -22,7 +25,11 @@ public class ApplicationController {
     private UserService userService;
 
     @GetMapping("/my-applications")
-    public String myApplicationsPage() {
+    public String myApplicationsPage(Principal principal, Model model) {
+        Long userId = getUserIdFromPrincipal(principal);
+        List<ApplicationViewDTO> applications = applicationService.getApplicationsByUser(userId);
+        applications.forEach(app -> app.setStatus(applicationService.getStatusInRussian(app.getStatus())));
+        model.addAttribute("applications", applications);
         return "my-applications";
     }
 
@@ -42,7 +49,7 @@ public class ApplicationController {
     public ResponseEntity<?> submit(@RequestParam Long vacancyId, Principal principal) {
         Long userId = getUserIdFromPrincipal(principal);
         try {
-            applicationService.submitApplication(userId, vacancyId);
+            applicationService.submitApplication(userId, applicationService.getVacancyById(vacancyId));
             return ResponseEntity.ok().body("Отклик отправлен");
         } catch (StaleObjectStateException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());

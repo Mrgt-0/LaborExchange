@@ -36,28 +36,22 @@ public class UserService {
 
     @Transactional
     public void registerUser(UserDTO userDTO) {
-        if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(userDTO.getEmail()).isPresent())
             throw new RuntimeException("Пользователь с таким email уже существует: " + userDTO.getEmail());
-        }
 
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
         userDTO.setPassword(encodedPassword);
-
         User registeredUser = userMapper.toEntity(userDTO);
-
         Set<UserType> userTypes = userDTO.getUserTypes();
-        if (userTypes == null || userTypes.isEmpty()) {
+        if (userTypes == null || userTypes.isEmpty())
             throw new RuntimeException("Тип пользователя не может быть пустым.");
-        }
 
         Set<UserType> savedUserTypes = new HashSet<>();
-
         for (UserType userType : userTypes) {
             UserType existingUserType = userTypeRepository.findByType(userType.getType());
             if (existingUserType != null) {
-                savedUserTypes.add(existingUserType); // Добавление уже существующего типа
+                savedUserTypes.add(existingUserType);
             } else {
-                // Сохранение нового UserType, если его нет в базе
                 existingUserType = new UserType(userType.getType());
                 userTypeRepository.save(existingUserType);
                 savedUserTypes.add(existingUserType);
@@ -66,7 +60,6 @@ public class UserService {
 
         registeredUser.setUserTypes(savedUserTypes);
         userRepository.save(registeredUser);
-
         logger.info("Пользователь успешно зарегистрирован: {}", registeredUser.getEmail());
     }
 
@@ -74,6 +67,12 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден: " + email));
         return userMapper.toDTO(user);
+    }
+
+    public Long findIdByEmail(String email) {
+        User employer = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Работодатель не найден по email: " + email));
+        return employer.getId();
     }
 
     public UserDTO findUserById(Long userId) {

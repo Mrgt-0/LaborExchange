@@ -28,7 +28,7 @@ public class VacancyService {
     private UserRepository userRepository;
 
     @Autowired
-    private UserMapper userMapper;
+    private NotificationService notificationService;
 
     @Transactional
     public void create(String title, String description, String location, float salary, User employer) {
@@ -40,6 +40,10 @@ public class VacancyService {
         vacancy.setEmployer(employer);
         vacancyRepository.save(vacancy);
         logger.info("Вакансия успешно создана: {}", vacancy.getTitle());
+        String message = "Опубликована новая вакансия.";
+
+        // Отправляем уведомление соискателю
+        notificationService.createAndSendVacancyNotification(vacancy.getEmployer().getId(), message, vacancy);
     }
 
     public List<Vacancy> getAllVacancies() {

@@ -7,89 +7,81 @@
     <style>
         body {
             font-family: 'Open Sans', sans-serif;
-            background: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            background-color: #f4f4f4;
             margin: 0;
+            padding: 20px; /* Добавим отступ */
         }
 
-        .login-block {
-            background: white;
-            padding: 40px;
+        .container {
+            background-color: white;
+            padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 400px;
-            text-align: center;
-        }
-
-        .login-block img {
-            width: 100px;
-            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px; /* Ограничиваем ширину контейнера */
+            margin: auto; /* Центруем контейнер */
         }
 
         h1 {
-            font-size: 24px;
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-inline {
             margin-bottom: 20px;
         }
 
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: 500;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        select {
-            width: 100%;
+        .form-control {
             padding: 10px;
-            margin-bottom: 20px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 14px;
+            width: 500px; /* Высота текстового поля */
+            font-size: 16px; /* Размер шрифта */
         }
 
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #3498db;
-            color: white;
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
             border: none;
             border-radius: 4px;
-            font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s;
+            text-decoration: none; /* Убираем подчеркивание у ссылок */
         }
 
-        button:hover {
-            background-color: #2980b9;
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
         }
 
-        .error-message {
-            color: red;
-            margin-top: 10px;
+        .btn-primary:hover {
+            background-color: #2980b9; /* Цвет кнопки при наведении */
         }
 
-        .login-links {
-            margin-top: 20px;
-            font-size: 14px;
+        .table {
+            width: 100%;
+            border-collapse: collapse; /* Убираем двойные границы */
+            margin-bottom: 20px;
         }
 
-        .login-links a {
-            color: #3498db;
-            text-decoration: none;
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd; /* Обводка ячеек */
         }
 
-        .login-links a:hover {
-            text-decoration: underline;
+        .table th {
+            background-color: #f8f9fa; /* Фоновый цвет заголовков */
+        }
+
+        .text-center {
+            text-align: center; /* Центрирование текста */
+        }
+
+        .mt-3 {
+            margin-top: 20px; /* Отступ сверху */
         }
     </style>
-    <link rel="stylesheet" href="/assets/css/app.min.css">
-    <link rel="stylesheet" href="/assets/css/custom.css">
 </head>
 <body>
 <div class="container">

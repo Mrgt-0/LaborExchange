@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Мои уведомления</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .notification {
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .unread { background-color: #e7f3fe; }
+    .notification-title {
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #007bff;
+      margin-bottom: 5px;
+    }
+    .notification-link {
+      color: #007bff;
+      text-decoration: none;
+    }
+    .notification-link:hover {
+      text-decoration: underline;
+    }
+    button {
+      margin-top: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Мои уведомления</h2>
+<div id="notificationsContainer">
+    <div th:each="notification : ${notifications}">
+        <div class="notification-title" th:text="${notification.vacancyTitle}"></div>
+        <div class="notification-message" th:text="${notification.message}"></div>
+        <a th:href="@{/vacancies/user-vacancy-view/{id}(id=${notification.vacancyId})}"
+           class="notification-link">Перейти к вакансии</a>
+        <br><hr>
+    </div>
+</div>
+<a href="/users/user-profile" class="btn btn-primary">На главную</a>
+</body>
+</html>

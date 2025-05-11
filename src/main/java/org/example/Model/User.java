@@ -1,7 +1,5 @@
 package org.example.Model;
-
 import jakarta.persistence.*;
-
 import java.util.Set;
 
 @Entity
@@ -14,7 +12,6 @@ public class User {
     private String lastname;
     private String email;
     private String password;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_user_types",
@@ -24,7 +21,6 @@ public class User {
     private Set<UserType> userTypes;
 
     public User() {}
-
     public User(String name, String lastname, String email, String password, Set<UserType> userTypes) {
         this.name = name;
         this.lastname = lastname;

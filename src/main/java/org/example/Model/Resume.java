@@ -1,5 +1,4 @@
 package org.example.Model;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -8,27 +7,15 @@ public class Resume {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     @Column(name = "title", nullable = false)
     private String title;
-
     @Column(name = "userid", nullable = false)
     private Long userId;
-
     private String skills;
-
     private String experience;
     private String education;
 
     public Resume() {}
-
-    public Resume(Long userId, String title, String skills, String experience, String education) {
-        this.userId = userId;
-        this.title = title;
-        this.skills = skills;
-        this.experience = experience;
-        this.education = education;
-    }
 
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }

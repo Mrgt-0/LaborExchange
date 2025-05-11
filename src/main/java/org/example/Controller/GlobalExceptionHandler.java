@@ -39,15 +39,4 @@ public class GlobalExceptionHandler {
         model.addAttribute("errorType", ex.getClass().getSimpleName());
         return "error";
     }
-//    @ExceptionHandler(AccessDeniedException.class)
-//    public String handleAccessDenied(AccessDeniedException ex) {
-//        logger.warn("Доступ запрещён: {}", ex.getMessage());
-//        return "error-access-denied";
-//    }
-//
-//    @ExceptionHandler(Exception.class)
-//    public String handleGeneric(Exception ex) {
-//        logger.error("Внутренняя ошибка сервера", ex);
-//        return "error";
-//    }
 }

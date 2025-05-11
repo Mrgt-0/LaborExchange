@@ -10,30 +10,56 @@
     body {
       font-family: 'Open Sans', sans-serif;
       background: #f4f4f4;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
       margin: 0;
+      padding: 20px;
     }
 
-    .login-block {
+    .profile-container {
       background: white;
       padding: 40px;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      width: 400px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      margin: auto;
       text-align: center;
     }
 
-    .login-block img {
-      width: 100px;
+    h1 {
+      font-size: 28px;
       margin-bottom: 20px;
+      color: #333;
     }
 
-    h1 {
-      font-size: 24px;
-      margin-bottom: 20px;
+    .user-info p {
+      font-size: 16px;
+      margin: 10px 0;
+      color: #555;
+    }
+
+    button,
+    .btn {
+      padding: 12px 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin: 12px 0;
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    button:hover,
+    .btn:hover {
+      background-color: #2980b9;
+    }
+
+    #edit-form {
+      margin-top: 20px;
+      text-align: left;
+      display: none;
     }
 
     label {
@@ -43,9 +69,7 @@
     }
 
     input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    select {
+    input[type="email"] {
       width: 100%;
       padding: 10px;
       margin-bottom: 20px;
@@ -55,43 +79,16 @@
       font-size: 14px;
     }
 
-    button {
-      width: 100%;
-      padding: 10px;
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #2980b9;
+    hr {
+      margin: 20px 0;
     }
 
     .error-message {
       color: red;
       margin-top: 10px;
     }
-
-    .login-links {
-      margin-top: 20px;
-      font-size: 14px;
-    }
-
-    .login-links a {
-      color: #3498db;
-      text-decoration: none;
-    }
-
-    .login-links a:hover {
-      text-decoration: underline;
-    }
   </style>
 </head>
-
 <body>
 <div class="profile-container">
   <h1>Профиль пользователя</h1>
@@ -101,18 +98,20 @@
     <p>Email: <span th:text="${user.email}"></span></p>
   </div>
   <button onclick="showEditForm()">Редактировать профиль</button>
-<br>
-  <br>
+
+  <div id="notificationLinkContainer">
+    <a class="btn btn-info" th:if="${user != null}" th:href="@{/notifications}">Уведомления</a>
+    <span th:if="${user == null}">Вы не авторизованы.</span>
+  </div>
+  <hr>
+
   <a class="btn btn-info" href="/resumes/resume-list">Список резюме</a>
-  <br><br>
   <a class="btn btn-info" href="/vacancies/all">Список вакансий</a>
-  <br><br>
-  <a class="btn btn-primary" href="/applications/my-applications">Ваши отклики</a>
-  <br>
+  <a class="btn btn-primary" href="/users/applications/my-applications">Ваши отклики</a>
   <hr>
   <a class="btn btn-info" href="/auth/login">Выйти</a>
 
-  <div id="edit-form" style="display: none;">
+  <div id="edit-form">
     <h2>Редактировать профиль</h2>
     <form action="#" th:action="@{/users/user-profile}" method="post" th:object="${user}">
       <div>
@@ -139,7 +138,6 @@
   function showEditForm() {
     document.getElementById('edit-form').style.display = 'block';
   }
-
   function cancelEdit() {
     document.getElementById('edit-form').style.display = 'none';
   }

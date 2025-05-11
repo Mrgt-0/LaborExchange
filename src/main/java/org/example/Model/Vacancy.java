@@ -1,5 +1,4 @@
 package org.example.Model;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -12,13 +11,11 @@ public class Vacancy {
     private String description;
     private String location;
     private float salary;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "employer_id", nullable = false)
     private User employer;
 
     public Vacancy() {}
-
     public Vacancy(String title, String description, String location, float salary, User employer) {
         this.title = title;
         this.description = description;

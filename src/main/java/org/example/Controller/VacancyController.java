@@ -1,10 +1,10 @@
 package org.example.Controller;
+import org.example.Model.Application;
 import org.example.Repository.UserRepository;
-import org.example.Repository.VacancyRepository;
+import org.example.Service.ApplicationService;
 import org.springframework.security.core.Authentication;
 import org.example.DTO.UserDTO;
 import org.example.DTO.VacancyDTO;
-import org.example.Mapper.UserMapper;
 import org.example.Mapper.VacancyMapper;
 import org.example.Model.User;
 import org.example.Model.Vacancy;
@@ -38,6 +38,21 @@ public class VacancyController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ApplicationService applicationService;
+
+    @GetMapping("/{id}/applications")
+    public String showApplications(@PathVariable Long id, Model model) {
+        List<Application> applications = applicationService.getApplicationsForVacancy(id);
+        model.addAttribute("applications", applications);
+
+        // Добавьте вакансию в модель, чтобы можно было получить доступ к заголовку
+        Vacancy vacancy = applicationService.getVacancyById(id);
+        model.addAttribute("vacancy", vacancy);
+
+        return "employer-application-list";
+    }
 
     @PreAuthorize("hasRole('EMPLOYER') or hasRole('ADMIN')")
     @GetMapping("/vacancy-add")
@@ -79,7 +94,6 @@ public class VacancyController {
             logger.error("Попытка доступа к защищенному ресурсу без аутентификации.");
             return "error";
         }
-
         try {
             UserDTO user = userService.findByEmail(principal.getName());
             if (user == null) {
@@ -126,17 +140,14 @@ public class VacancyController {
             logger.error("Пользователь не найден.");
             return "error";
         }
-
         VacancyDTO vacancyDTO = vacancyMapper.toDTO(vacancyService.findVacancyById(id));
         if (vacancyDTO == null) {
             logger.error("Вакансия с id={} не найдена", id);
             return "error";
         }
-
         boolean isAdmin = user.getUserTypes().stream()
                 .anyMatch(r -> "ROLE_ADMIN".equals(r.getTypeString()));
         boolean isOwner = false;
-
         if (vacancyDTO.getEmployer() != null) {
             Long employerId = vacancyDTO.getEmployer().getId();
             isOwner = employerId != null && employerId.equals(user.getId());

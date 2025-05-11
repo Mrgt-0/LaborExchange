@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <title>Отклики на ваши вакансии</title>
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: auto;
+        }
+
+        h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .form-select {
+            width: auto;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            color: white;
+            background-color: #3498db;
+            margin-top: 20px;
+            padding: 10px 15px;
+            border-radius: 4px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <h2>Отклики на ваши вакансии</h2>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Вакансия</th>
+            <th>Соискатель</th>
+            <th>Статус</th>
+            <th>Обновить статус</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="app : ${applications}">
+            <td th:if="${app.vacancy != null}">
+                <span th:text="${app.vacancy.title}">Вакансия</span>
+            </td>
+            <td th:if="${app.vacancy == null}">
+                <span>Вакансия не найдена</span>
+            </td>
+            <td>
+                <a th:if="${app.applicant != null}"
+                   th:href="@{/resumes/employer-resume-summary/{id}(id=${app.applicant.id})}"
+                   th:text="${app.applicant.name}">Имя соискателя</a>
+                <span th:if="${app.applicant == null}">Неизвестный соискатель</span>
+            </td>
+            <td th:text="${app.status}">Статус</td>
+            <td>
+                <form th:action="@{'/employer/applications/' + ${app.id} + '/status'}" method="post">
+                    <select name="status" class="form-select form-select-sm" required>
+                        <option th:selected="${app.status == T(org.example.Enum.ApplicationStatus).ACCEPTED}" th:value="ACCEPTED">Принят</option>
+                        <option th:selected="${app.status == T(org.example.Enum.ApplicationStatus).REJECTED}" th:value="REJECTED">Отклонён</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary btn-sm mt-1">Обновить</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+
+        <a href="/vacancies/my" class="btn btn-primary">Вернуться к списку вакансий</a>
+    </table>
+</div>
+</body>
+</html>

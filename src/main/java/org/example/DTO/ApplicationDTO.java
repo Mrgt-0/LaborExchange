@@ -4,18 +4,19 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import org.example.Enum.ApplicationStatus;
+import org.example.Model.Vacancy;
 
 public class ApplicationDTO {
     private long id;
     private Long userId;
-    private Long vacancyId;
+    private Vacancy vacancy;
     private ApplicationStatus status;
 
     public ApplicationDTO() {}
 
-    public ApplicationDTO(Long userId, Long vacancyId) {
+    public ApplicationDTO(Long userId, Vacancy vacancy) {
         this.userId = userId;
-        this.vacancyId = vacancyId;
+        this.vacancy = vacancy;
         this.status = ApplicationStatus.PENDING;
     }
 
@@ -25,8 +26,8 @@ public class ApplicationDTO {
     public Long getUserId() { return userId; }
     public void setUser(Long userId) { this.userId = userId; }
 
-    public Long getVacancyId() { return vacancyId; }
-    public void setVacancyId(Long vacancyId) { this.vacancyId = vacancyId; }
+    public Vacancy getVacancy() { return vacancy; }
+    public void setVacancy(Vacancy vacancy) { this.vacancy = vacancy; }
 
     public ApplicationStatus getStatus() { return status; }
     public void setStatus(ApplicationStatus status) { this.status = status; }

@@ -1,184 +1,90 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Добавить вакансию</title>
-
     <style>
         body {
             font-family: 'Open Sans', sans-serif;
-            background: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            background-color: #f4f4f4;
             margin: 0;
+            padding: 20px;
         }
 
-        .login-block {
-            background: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 400px;
-            text-align: center;
-        }
-
-        .login-block img {
-            width: 100px;
-            margin-bottom: 20px;
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
         }
 
         h1 {
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 20px;
+            color: #333;
+            text-align: center;
         }
 
         label {
             display: block;
-            margin: 10px 0 5px;
-            font-weight: 500;
+            margin-bottom: 5px;
+            color: #555;
         }
 
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        select {
+        input[type="text"], input[type="number"], textarea {
             width: 100%;
             padding: 10px;
             margin-bottom: 20px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
-            font-size: 14px;
+            font-size: 16px;
+        }
+
+        textarea {
+            resize: none;
+            height: 100px;
         }
 
         button {
-            width: 100%;
-            padding: 10px;
+            padding: 12px 20px;
             background-color: #3498db;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: 16px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            width: 100%;
         }
 
         button:hover {
             background-color: #2980b9;
         }
 
-        .error-message {
-            color: red;
-            margin-top: 10px;
-        }
-
-        .login-links {
+        .btn-primary {
+            display: inline-block;
             margin-top: 20px;
-            font-size: 14px;
-        }
-
-        .login-links a {
-            color: #3498db;
-            text-decoration: none;
-        }
-
-        .login-links a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Добавить вакансию</title>
-
-    <style>
-        body {
-            font-family: 'Open Sans', sans-serif;
-            background: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .login-block {
-            background: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 400px;
             text-align: center;
-        }
-
-        .login-block img {
-            width: 100px;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: 500;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
             background-color: #3498db;
             color: white;
-            border: none;
+            padding: 10px 15px;
             border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            width: 100%;
         }
 
-        button:hover {
+        .btn-primary:hover {
             background-color: #2980b9;
         }
 
-        .error-message {
-            color: red;
-            margin-top: 10px;
-        }
-
-        .login-links {
-            margin-top: 20px;
-            font-size: 14px;
-        }
-
-        .login-links a {
-            color: #3498db;
-            text-decoration: none;
-        }
-
-        .login-links a:hover {
-            text-decoration: underline;
+        hr {
+            margin: 20px 0;
         }
     </style>
 </head>
@@ -206,6 +112,5 @@
 
     <a href="/vacancies/my" class="btn btn-primary">Вернуться к списку вакансий</a>
 </div>
-<script src="script.js"></script> <!-- Подключение JavaScript -->
 </body>
 </html>

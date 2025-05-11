@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/resumes")
@@ -109,14 +110,18 @@ public class ResumeController {
         }
     }
 
-    @GetMapping("/employer-resume-summary/{id}")
-    public String viewEmployerResume(@PathVariable Long id, Model model) throws SystemException {
-        ResumeDTO resume = resumeService.findResumeById(id);
-        if (resume != null) {
-            model.addAttribute("resume", resume);
-            return "employer-resume-summary";
+    @GetMapping("/employer-resume-summary/{userId}")
+    public String viewEmployerResume(@PathVariable Long userId, Model model) throws SystemException {
+        logger.info("Получаем резюме для User ID: " + userId);
+
+        ResumeDTO resume = resumeService.findResumesByUserId(userId).stream().findFirst().orElse(null); // Получаем первое резюме
+
+        if (resume != null) { // Проверяем, не null ли объект
+            model.addAttribute("resume", resume); // Передаем объект в модель
+            return "employer-resume-summary"; // Возвращаем шаблон
         } else {
-            return "redirect:/resumes/all";
+            logger.info("Резюме не найдено для User ID: " + userId);
+            return "redirect:/resumes/all"; // Перенаправляем, если не найдено
         }
     }
 
