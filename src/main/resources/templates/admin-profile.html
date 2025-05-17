@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Профиль пользователя</title>
-
     <style>
         body {
             font-family: 'Open Sans', sans-serif;
@@ -99,20 +98,15 @@
         <p>Email: <span th:text="${user.email}"></span></p>
     </div>
     <button onclick="showEditForm()">Редактировать профиль</button>
-    <div id="notificationLinkContainer">
-        <a class="btn btn-info" th:if="${user != null}" th:href="@{/notifications}">Уведомления</a>
-        <span th:if="${user == null}">Вы не авторизованы.</span>
-    </div>
-    <hr>
-    <a class="btn btn-info" href="/vacancies/my">Ваши вакансии</a>
-    <a class="btn btn-info" href="/vacancies/all">Все вакансии</a>
+    <a class="btn btn-info" href="/vacancies/admin-vacancy-list">Управление вакансиями</a>
+    <a class="btn btn-info" href="/resumes/all-resume-list">Управление резюме</a>
+    <a class="btn btn-info" href="/users/admin-users-list">Управление пользователями</a>
     <hr>
     <a class="btn btn-info" href="/auth/login">Выйти</a>
 
     <div id="edit-form" style="display: none;">
         <h2>Редактировать профиль</h2>
         <form action="#" th:action="@{/users/update-profile}" method="post" th:object="${user}">
-            <input type="hidden" name="userTypes" value="EMPLOYER">
             <div>
                 <label for="edit-name">Имя:</label>
                 <input type="text" id="edit-name" th:field="*{name}">
@@ -125,7 +119,7 @@
                 <label for="edit-email">Email:</label>
                 <input type="email" id="edit-email" th:field="*{email}">
             </div>
-            <input type="hidden" name="role" th:value="${user.userTypes.iterator().next().type}"/>
+            <input type="hidden" name="userTypes" th:value="${user.userTypes.iterator().next().type}"/>
             <div>
                 <button type="submit">Сохранить изменения</button>
                 <button type="button" onclick="cancelEdit()">Отмена</button>

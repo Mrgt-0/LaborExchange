@@ -15,6 +15,10 @@ public class Resume {
     private String experience;
     private String education;
 
+    @ManyToOne
+    @JoinColumn(name = "userid", insertable = false, updatable = false)
+    private User user;
+
     public Resume() {}
 
     public long getId() { return id; }
@@ -34,4 +38,7 @@ public class Resume {
 
     public String getEducation() { return education; }
     public void setEducation(String education) { this.education = education; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 }

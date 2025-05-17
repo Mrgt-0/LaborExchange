@@ -1,12 +1,13 @@
 package org.example.Service;
-
 import jakarta.transaction.SystemException;
 import jakarta.transaction.Transactional;
 import org.example.DTO.UserDTO;
-import org.example.Enum.UserTypeEnum;
+import org.example.DTO.UserTypeDTO;
 import org.example.Mapper.UserMapper;
+import org.example.Mapper.UserTypeMapper;
 import org.example.Model.User;
 import org.example.Model.UserType;
+import org.example.Repository.NotificationRepository;
 import org.example.Repository.UserRepository;
 import org.example.Repository.UserTypeRepository;
 import org.slf4j.Logger;
@@ -15,24 +16,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-
     @Autowired
     private UserMapper userMapper;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
-
     @Autowired
     private UserTypeRepository userTypeRepository;
+    @Autowired
+    private UserTypeMapper userTypeMapper;
+    @Autowired
+    private NotificationRepository notificationRepository;
 
     @Transactional
     public void registerUser(UserDTO userDTO) {
@@ -75,6 +76,19 @@ public class UserService {
         return employer.getId();
     }
 
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll().stream().map(userMapper::toDTO).collect(Collectors.toList());
+    }
+
+    public void updateUserRole(Long userId, String[] userTypes) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<UserType> roles = userTypeRepository.findByTypeIn(Arrays.asList(userTypes));
+        user.setUserTypes(new HashSet<>(roles));
+        userRepository.save(user);
+    }
+
     public UserDTO findUserById(Long userId) {
         User user = userRepository.getById(userId);
         return userMapper.toDTO(user);
@@ -90,5 +104,17 @@ public class UserService {
                     return userRepository.save(user);
                 })
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+    }
+
+    @Transactional
+    public void deleteUserById(Long userId) {
+        Optional<UserDTO> optionalUser = userRepository.findById(userId).stream().map(userMapper::toDTO).findFirst();
+        if (optionalUser.isPresent()) {
+            UserDTO user = optionalUser.get();
+            notificationRepository.deleteByUserId(userId);
+            userRepository.delete(userMapper.toEntity(user));
+            logger.info("Пользователь {} успешно удален.", user.getEmail());
+        } else
+            logger.error("Пользователь с ID {} не найден, удаление невозможно.", userId);
     }
 }

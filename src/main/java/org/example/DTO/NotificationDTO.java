@@ -1,24 +1,26 @@
 package org.example.DTO;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import org.example.Enum.ReadStatus;
+import java.time.LocalDateTime;
 
 public class NotificationDTO {
     private long id;
     private Long userId;
     private String message;
-    private ReadStatus readStatus;
+    private Long vacancyId;
+    private LocalDateTime createdDate;
 
-    public NotificationDTO(Long userId, String message) {
+    public NotificationDTO(long id, Long userId, String message, Long vacancyId, LocalDateTime createdDate) {
+        this.id = id;
         this.userId = userId;
         this.message = message;
+        this.vacancyId = vacancyId;
+        this.createdDate = createdDate;
     }
+
+    public NotificationDTO() {}
     public Long getNotificationId() {
         return id;
     }
-
     public void setNotificationId(Long id) {
         this.id = id;
     }
@@ -26,7 +28,6 @@ public class NotificationDTO {
     public Long getUserId() {
         return userId;
     }
-
     public void setUserId(Long userId) {
         this.userId = userId;
     }
@@ -34,8 +35,13 @@ public class NotificationDTO {
     public String getMessage() {
         return message;
     }
-
     public void setMessage(String message) {
         this.message = message;
     }
+
+    public Long getVacancyId() { return vacancyId; }
+    public void setVacancyId(Long vacancyId) { this.vacancyId = vacancyId; }
+
+    public LocalDateTime getCreatedDate() { return createdDate; }
+    public void setCreatedDate(LocalDateTime createdDate) { this.createdDate = createdDate; }
 }

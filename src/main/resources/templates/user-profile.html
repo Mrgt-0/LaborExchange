@@ -104,16 +104,16 @@
     <span th:if="${user == null}">Вы не авторизованы.</span>
   </div>
   <hr>
-
   <a class="btn btn-info" href="/resumes/resume-list">Список резюме</a>
   <a class="btn btn-info" href="/vacancies/all">Список вакансий</a>
-  <a class="btn btn-primary" href="/users/applications/my-applications">Ваши отклики</a>
+  <a class="btn btn-primary" href="/applications/my-applications">Ваши отклики</a>
   <hr>
   <a class="btn btn-info" href="/auth/login">Выйти</a>
 
   <div id="edit-form">
     <h2>Редактировать профиль</h2>
-    <form action="#" th:action="@{/users/user-profile}" method="post" th:object="${user}">
+    <form action="#" th:action="@{/users/update-profile}" method="post" th:object="${user}">
+      <input type="hidden" name="userTypes" th:value="${user.userTypes.iterator().next().type}"/>
       <div>
         <label for="edit-name">Имя:</label>
         <input type="text" id="edit-name" th:field="*{name}">

@@ -113,7 +113,7 @@
             </td>
             <td th:text="${app.status}">Статус</td>
             <td>
-                <form th:action="@{'/employer/applications/' + ${app.id} + '/status'}" method="post">
+                <form th:action="@{/employer/applications/{applicationId}/status(applicationId=${app.id})}" method="post">
                     <select name="status" class="form-select form-select-sm" required>
                         <option th:selected="${app.status == T(org.example.Enum.ApplicationStatus).ACCEPTED}" th:value="ACCEPTED">Принят</option>
                         <option th:selected="${app.status == T(org.example.Enum.ApplicationStatus).REJECTED}" th:value="REJECTED">Отклонён</option>
@@ -123,7 +123,6 @@
             </td>
         </tr>
         </tbody>
-
         <a href="/vacancies/my" class="btn btn-primary">Вернуться к списку вакансий</a>
     </table>
 </div>

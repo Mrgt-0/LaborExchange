@@ -1,9 +1,6 @@
 package org.example.DTO;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import org.example.Enum.ApplicationStatus;
+import org.example.Model.User;
 import org.example.Model.Vacancy;
 
 public class ApplicationDTO {
@@ -11,13 +8,15 @@ public class ApplicationDTO {
     private Long userId;
     private Vacancy vacancy;
     private ApplicationStatus status;
+    private UserDTO applicant;
 
     public ApplicationDTO() {}
 
-    public ApplicationDTO(Long userId, Vacancy vacancy) {
+    public ApplicationDTO(Long userId, Vacancy vacancy, UserDTO user) {
         this.userId = userId;
         this.vacancy = vacancy;
         this.status = ApplicationStatus.PENDING;
+        this.applicant = user;
     }
 
     public long getId() { return id; }
@@ -31,6 +30,9 @@ public class ApplicationDTO {
 
     public ApplicationStatus getStatus() { return status; }
     public void setStatus(ApplicationStatus status) { this.status = status; }
+
+    public UserDTO getApplicant() { return applicant; }
+    public void setApplicant(UserDTO applicant) { this.applicant = applicant; }
 
     public void submit() {
         this.status = ApplicationStatus.PENDING;

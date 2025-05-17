@@ -11,16 +11,10 @@ public class ResumeDTO {
     private String skills;
     private String experience;
     private String education;
+    private String userName;
+    private String userEmail;
 
     public ResumeDTO() {}
-
-    public ResumeDTO(Long userId, String title, String skills, String experience, String education) {
-        this.userId = userId;
-        this.title = title;
-        this.skills = skills;
-        this.experience = experience;
-        this.education = education;
-    }
 
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
@@ -39,4 +33,10 @@ public class ResumeDTO {
 
     public String getEducation() { return education; }
     public void setEducation(String education) { this.education = education; }
+
+    public String getUserName() { return userName; }
+    public void setUserName(String userName) { this.userName = userName; }
+
+    public String getUserEmail() { return userEmail; }
+    public void setUserEmail(String userEmail) { this.userEmail = userEmail; }
 }

@@ -1,7 +1,5 @@
 package org.example.DTO;
-
 import org.example.Enum.ApplicationStatus;
-import org.example.Model.Vacancy;
 
 public class ApplicationViewDTO {
     private Long id;

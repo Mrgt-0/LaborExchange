@@ -1,22 +1,29 @@
 package org.example.Controller;
-
+import jakarta.persistence.EntityNotFoundException;
+import org.example.DTO.ApplicationDTO;
 import org.example.DTO.ApplicationViewDTO;
 import org.example.DTO.UserDTO;
+import org.example.DTO.VacancyDTO;
+import org.example.Mapper.VacancyMapper;
+import org.example.Model.User;
+import org.example.Model.Vacancy;
 import org.example.Service.ApplicationService;
 import org.example.Service.UserService;
+import org.example.Service.VacancyService;
 import org.hibernate.StaleObjectStateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import java.security.Principal;
 import java.util.List;
 
 @Controller
-@RequestMapping("/users/applications")
+@RequestMapping("/applications")
 public class ApplicationController {
     @Autowired
     private ApplicationService applicationService;
@@ -49,8 +56,13 @@ public class ApplicationController {
     public ResponseEntity<?> submit(@RequestParam Long vacancyId, Principal principal) {
         Long userId = getUserIdFromPrincipal(principal);
         try {
-            applicationService.submitApplication(userId, applicationService.getVacancyById(vacancyId));
+            Vacancy vacancy = applicationService.getVacancyById(vacancyId);
+            System.out.println("Attempting to submit application for User ID: " + userId + " and Vacancy ID: " + vacancy.getId());
+
+            applicationService.submitApplication(userId, vacancy);
             return ResponseEntity.ok().body("Отклик отправлен");
+        } catch (EntityNotFoundException | IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (StaleObjectStateException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }

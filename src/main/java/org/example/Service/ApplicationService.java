@@ -1,21 +1,19 @@
 package org.example.Service;
-
 import jakarta.transaction.Transactional;
 import org.example.DTO.ApplicationDTO;
 import org.example.DTO.ApplicationViewDTO;
+import org.example.DTO.VacancyDTO;
 import org.example.Enum.ApplicationStatus;
 import org.example.Mapper.ApplicationMapper;
 import org.example.Mapper.VacancyMapper;
 import org.example.Model.Application;
 import org.example.Model.Vacancy;
 import org.example.Repository.ApplicationRepository;
-import org.example.Repository.NotificationRepository;
 import org.example.Repository.VacancyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,10 +24,8 @@ public class ApplicationService {
     private static final Logger logger = LoggerFactory.getLogger(ApplicationService.class);
     @Autowired
     private ApplicationRepository applicationRepository;
-
     @Autowired
     private NotificationService notificationService;
-
     @Autowired
     private VacancyRepository vacancyRepository;
     @Autowired
@@ -38,6 +34,9 @@ public class ApplicationService {
     // Подать новый отклик
     @Transactional
     public void submitApplication(Long userId, Vacancy vacancy) {
+        if (vacancy == null || vacancy.getId() == null) {
+            throw new IllegalArgumentException("Вакансия не может быть null");
+        }
         Optional<Application> existingApplication = applicationRepository.findByUserIdAndVacancyId(userId, vacancy.getId());
         if (existingApplication.stream().anyMatch(app -> app.getStatus() != ApplicationStatus.WITHDRAWN))
             throw new IllegalStateException("Вы уже подали отклик на эту вакансию");
@@ -46,6 +45,9 @@ public class ApplicationService {
         application.setUserId(userId);
         application.setVacancy(vacancy);
         application.setStatus(ApplicationStatus.PENDING);
+
+        // Логирование перед сохранением
+        System.out.println("Saving application for user ID: " + userId + ", with vacancy ID: " + vacancy.getId());
         applicationRepository.save(application);
     }
     // Отозвать отклик
@@ -85,7 +87,7 @@ public class ApplicationService {
             default -> "Статус отклика обновлён.";
         };
         // Отправляем уведомление соискателю
-        notificationService.createAndSendApplicationNotification(application.getUserId(), message, application.getVacancy());
+        notificationService.createAndSendNotification(application.getUserId(), message, application.getVacancy().getId());
     }
 
     // Получение откликов по пользователю
@@ -100,19 +102,6 @@ public class ApplicationService {
         return vacancyRepository.findById(vacancyId).orElse(null);
     }
 
-    public List<ApplicationViewDTO> getApplicationsForUserWithVacancyTitle(Long userId) {
-        List<Application> applications = applicationRepository.findByUserId(userId);
-        List<ApplicationViewDTO> result = new ArrayList<>();
-
-        for (Application app : applications) {
-            Vacancy vacancy = vacancyRepository.findById(app.getVacancy().getId()).orElse(null);
-
-            ApplicationViewDTO dto = new ApplicationViewDTO(app.getId(), vacancyMapper.toDTO(vacancy), app.getStatus());
-            result.add(dto);
-        }
-        return result;
-    }
-
     public String getStatusInRussian(String status) {
         switch (status) {
             case "PENDING":
@@ -121,6 +110,8 @@ public class ApplicationService {
                 return "Принят";
             case "REJECTED":
                 return "Отклонён";
+            case "WITHDRAWN":
+                return "Отозван";
             default:
                 return "Неизвестный статус";
         }

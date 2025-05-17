@@ -1,80 +1,168 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Мои резюме</title>
     <style>
         body {
-            font-family: 'Open Sans', sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
             margin: 0;
             padding: 20px;
-        }
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            margin: auto;
-        }
-        h1 {
-            font-size: 28px;
-            margin-bottom: 20px;
             color: #333;
         }
-        .form-inline {
-            margin-bottom: 20px;
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        .form-control {
+        h1 {
+            margin-bottom: 25px;
+            font-weight: 700;
+            font-size: 28px;
+            color: #222;
+            text-align: center;
+        }
+        form.form-inline {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        input.form-control {
+            flex: 1;
+            min-width: 250px;
             padding: 10px;
             border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 500px;
+            border-radius: 6px;
             font-size: 16px;
         }
-        .btn {
-            padding: 10px 20px;
+        button.btn, a.btn {
+            min-width: 150px;
+            padding: 10px 15px;
             font-size: 16px;
+            border-radius: 6px;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.3s;
             text-decoration: none;
+            text-align: center;
+            color: #fff;
+            user-select: none;
+            transition: background-color 0.3s ease;
         }
-        .btn-primary {
-            background-color: #3498db;
+        button.btn-primary, a.btn-primary {
+            background-color: #007bff;
+        }
+        button.btn-primary:hover, a.btn-primary:hover {
+            background-color: #0056b3;
+        }
+        table.table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 15px;
+            color: #444;
+            table-layout: fixed;
+        }
+        table.table thead tr {
+            background-color: #007bff;
             color: white;
+            font-weight: 700;
         }
-        .btn-primary:hover {
-            background-color: #2980b9;
+        table.table th, table.table td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
-        .btn-info {
+        tbody tr:hover {
+            background-color: #f1f7ff;
+        }
+        td.actions {
+            white-space: nowrap;
+        }
+        a.btn-info {
             background-color: #17a2b8;
             color: white;
+            margin-right: 8px;
+            border-radius: 6px;
+            padding: 7px 14px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
         }
-        .btn-info:hover {
-            background-color: #138496;
+        a.btn-info:hover {
+            background-color: #117a8b;
         }
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+        button.btn-danger {
+            background-color: #dc3545;
+            color: white;
+            border-radius: 6px;
+            padding: 7px 14px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease;
         }
-        .table th, .table td {
-            padding: 12px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-        .table th {
-            background-color: #f8f9fa;
+        button.btn-danger:hover {
+            background-color: #a71d2a;
         }
         .text-center {
             text-align: center;
+            font-style: italic;
+            color: #777;
+            font-size: 16px;
+        }
+        .btn-main {
+            display: block;
+            width: 180px;
+            margin: 20px auto 0 auto;
+            text-align: center;
+        }
+        @media (max-width: 900px) {
+            .container {
+                padding: 20px;
+            }
+            table.table, table.table thead, table.table tbody, table.table tr, table.table th, table.table td {
+                display: block;
+                width: 100%;
+            }
+            table.table thead tr {
+                display: none;
+            }
+            table.table tr {
+                margin-bottom: 15px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                padding: 15px;
+                background-color: #fafafa;
+            }
+            table.table td {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px 15px;
+                border: none;
+                border-bottom: 1px solid #ddd;
+            }
+            table.table td:last-child {
+                border-bottom: none;
+            }
+            table.table td:before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #555;
+                width: 140px;
+                flex-shrink: 0;
+            }
+            td.actions {
+                text-align: right;
+            }
         }
     </style>
-
     <script>
         function confirmDelete() {
             return confirm("Вы уверены, что хотите удалить это резюме?");
@@ -84,34 +172,46 @@
 <body>
 <div class="container">
     <h1>Список ваших резюме</h1>
-    <form th:action="@{/resumes/all}" method="get" class="form-inline mb-3">
-        <label>
-            <input type="text" name="title" placeholder="Поиск по названию" class="form-control mr-2" style="width: 500px;" th:value="${searchTitle}">
-        </label>
-        <button type="submit" class="btn btn-primary btn-sm"
-                style="width: 150px;">Поиск</button>
-        <a th:href="@{/resumes/all}" class="btn btn-primary btn-sm ml-2"
-           style="width: 150px; display: inline-block; text-align: center;">Сбросить</a>
+
+    <form th:action="@{/resumes/all-resume-list}" method="get" class="form-inline mb-3">
+        <input type="text" name="title" placeholder="Поиск по названию" class="form-control" th:value="${searchTitle}" />
+        <button type="submit" class="btn btn-primary">Поиск</button>
+        <a th:href="@{/resumes/all-resume-list}" class="btn btn-primary">Сбросить</a>
     </form>
+
     <table class="table">
         <thead>
         <tr>
-            <th>Название</th>
+            <th>Название резюме</th>
+            <th>Навыки</th>
+            <th>Опыт работы</th>
+            <th>Образование</th>
+            <th>Имя пользователя</th>
+            <th>Email пользователя</th>
+            <th>Действия</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="resume : ${resumes}">
-            <td th:text="${resume.title}"></td>
-            <td>
-                <a class="btn btn-info" th:href="@{/resumes/employer-resume-summary/{id}(id=${resume.id})}">Просмотреть</a>
+            <td data-label="Название резюме" th:text="${resume.title}"></td>
+            <td data-label="Навыки" th:text="${resume.skills}"></td>
+            <td data-label="Опыт работы" th:text="${resume.getExperience()}"></td>
+            <td data-label="Образование" th:text="${resume.education}"></td>
+            <td data-label="Имя пользователя" th:text="${resume.userName}"></td>
+            <td data-label="Email пользователя" th:text="${resume.userEmail}"></td>
+            <td data-label="Действия" class="actions">
+                <form th:action="@{/resumes/delete-resume/{id}(id=${resume.id})}" method="post" onsubmit="return confirmDelete()" style="display:inline;">
+                    <button type="submit" class="btn-danger">Удалить</button>
+                </form>
             </td>
         </tr>
         <tr th:if="${#lists.isEmpty(resumes)}">
-            <td colspan="6">Резюме не найдены.</td>
+            <td colspan="7" class="text-center">Резюме не найдены.</td>
         </tr>
         </tbody>
     </table>
-    <a href="/users/employer-profile" class="btn btn-primary">На главную</a>
+
+    <a href="/users/admin-profile" class="btn btn-primary btn-main">На главную</a>
 </div>
 </body>
 </html>

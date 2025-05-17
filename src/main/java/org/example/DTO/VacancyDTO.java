@@ -21,14 +21,6 @@ public class VacancyDTO {
 
     public VacancyDTO() {}
 
-    public VacancyDTO(String title, String description, String location, float salary, User employer) {
-        this.title = title;
-        this.description = description;
-        this.location = location;
-        this.salary = salary;
-        this.employer = employer;
-    }
-
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

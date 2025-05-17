@@ -27,10 +27,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/auth")
 public class AuthController {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
-
     @Autowired
     private UserService userService;
-
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -41,14 +39,12 @@ public class AuthController {
             logger.error("Ошибки валидации: {}", bindingResult.getAllErrors());
             return "register";
         }
-
         try {
             userService.registerUser(user);
         } catch (RuntimeException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "register";
         }
-
         redirectAttributes.addFlashAttribute("successMessage", "Регистрация прошла успешно! Пожалуйста, войдите.");
         return "redirect:/auth/login";
     }
@@ -73,18 +69,28 @@ public class AuthController {
         }
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-            SecurityContextHolder.getContext().setAuthentication(authentication); // **Устанавливаем аутентификацию**
+            SecurityContextHolder.getContext().setAuthentication(authentication); // Устанавливаем аутентификацию
             logger.info("Пользователь с email {} успешно вошел в систему.", email);
             UserDTO user = userService.findByEmail(email);
             if (user != null && user.getUserTypes() != null) {
-
-                for (UserType ut : user.getUserTypes()) {
+                for (UserType ut : user.getUserTypes())
                     logger.info("Роль пользователя: {}", ut.getType());
-                }
+
+                boolean isAdmin = user.getUserTypes().stream()
+                        .anyMatch(ut -> ut.getType() == UserTypeEnum.ADMIN);
                 boolean isEmployer = user.getUserTypes().stream()
                         .anyMatch(ut -> ut.getType() == UserTypeEnum.EMPLOYER);
+
+                logger.info("Пользователь является администратором: {}", isAdmin);
                 logger.info("Пользователь является работодателем: {}", isEmployer);
-                return isEmployer ? "redirect:/users/employer-profile" : "redirect:/users/user-profile";
+
+                if (isAdmin)
+                    return "redirect:/users/admin-profile";
+                else if (isEmployer)
+                    return "redirect:/users/employer-profile";
+                else
+                    return "redirect:/users/user-profile";
+
             } else {
                 logger.error("Пользователь не найден или не имеет типов.");
                 model.addAttribute("errorMessage", "Пользователь не найден.");

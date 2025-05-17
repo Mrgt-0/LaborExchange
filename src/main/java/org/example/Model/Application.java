@@ -13,8 +13,8 @@ public class Application {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
     private User applicant;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vacancy_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "vacancy_id", nullable = false)
     private Vacancy vacancy;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

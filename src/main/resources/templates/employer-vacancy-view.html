@@ -102,18 +102,15 @@
     <br/>
   </p>
   <hr>
-
   <a href="/vacancies/all" class="btn-primary">Вернуться к списку вакансий</a>
   <a th:href="@{/vacancies/{id}/applications(id=${vacancy.id})}" class="btn-primary">Показать отклики</a>
 
-  <form method="post" th:action="@{/vacancies/delete-vacancy}" style="display:inline;"
+  <form method="post" th:action="@{/vacancies/delete-vacancy/{id}(id=${vacancy.id})}" style="display:inline;"
         onsubmit="return confirm('Вы действительно хотите удалить вакансию?');">
     <input type="hidden" name="id" th:value="${vacancy.id}">
     <button type="submit" class="action-btn">Удалить</button>
   </form>
-
   <br><br>
-
   <a th:href="@{/vacancies/vacancy-edit/{id}(id=${vacancy.id})}" class="btn-primary">Редактировать</a>
 </div>
 </body>

@@ -33,7 +33,8 @@ public class SecurityConfig {
                         .requestMatchers("/auth/login", "/auth/register").permitAll()
                         .requestMatchers("/users/user-profile", "/vacancies/all", "resumes/resume-add", "/resumes/resume-list",
                                 "/resumes/resume-edit", "/users/applications/my-applications", "/api/notifications/user/**").authenticated()
-                        .requestMatchers( "/vacancies/my", "/vacancies/delete-vacancy", "/vacancies/vacancy-edit", "resumes/all").hasRole("EMPLOYER")
+                        .requestMatchers( "/vacancies/my", "/vacancies/delete-vacancy", "/vacancies/vacancy-edit").hasRole("EMPLOYER")
+                        .requestMatchers("/resumes/all-resume-list", "/vacancies/vacancy-edit", "vacancies/admin-vacancy-list", "/vacancies/delete-vacancy").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

@@ -1,21 +1,21 @@
 package org.example.Controller;
-
+import org.example.DTO.ApplicationDTO;
 import org.example.Enum.ApplicationStatus;
+import org.example.Mapper.ApplicationMapper;
 import org.example.Model.Application;
 import org.example.Model.Vacancy;
-import org.example.Repository.VacancyRepository;
 import org.example.Service.ApplicationService;
 import org.example.Service.UserService;
+import org.example.Service.VacancyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,10 +23,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/employer/applications")
 public class EmployerApplicationController {
     private static final Logger logger = LoggerFactory.getLogger(EmployerApplicationController.class);
-
     @Autowired
     private ApplicationService applicationService;
-
     @Autowired
     private UserService userService;
 
@@ -44,10 +42,11 @@ public class EmployerApplicationController {
     @PostMapping("/{applicationId}/status")
     public String updateStatus(@PathVariable Long applicationId,
                                @RequestParam("status") String status,
-                               Principal principal) {
+                               Principal principal,
+                               RedirectAttributes redirectAttributes,
+                               Model model) {
         Long employerId = getEmployerIdFromPrincipal(principal);
         List<Application> applications = applicationService.getApplicationsForEmployer(employerId);
-
         logger.info("Отклики для работодателя с ID {}: {}", employerId, applications.stream()
                 .map(a -> "ID: " + a.getId() + ", Employer ID: " + a.getUserId())
                 .collect(Collectors.joining(", ")));
@@ -56,7 +55,6 @@ public class EmployerApplicationController {
                 .filter(a -> a.getId() == applicationId)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Отклик с ID " + applicationId + " не найден для работодателя с ID " + employerId));
-
         ApplicationStatus applicationStatus;
         try {
             applicationStatus = ApplicationStatus.valueOf(status);
@@ -64,7 +62,11 @@ public class EmployerApplicationController {
             throw new RuntimeException("Недопустимый статус: " + status);
         }
         applicationService.updateApplicationStatus(applicationId, applicationStatus);
-        return "redirect:/employer/applications";
+        Long vacancyId = app.getVacancy().getId();
+        redirectAttributes.addFlashAttribute("statusUpdate", "Статус отклика успешно обновлен.");
+        model.addAttribute("application", app);
+        model.addAttribute("applications", applications);
+        return "redirect:/vacancies/" + vacancyId + "/applications";
     }
 
     private Long getEmployerIdFromPrincipal(Principal principal) {

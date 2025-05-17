@@ -1,7 +1,8 @@
 package org.example.Model;
 
 import jakarta.persistence.*;
-import org.example.Enum.ReadStatus;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "notifications")
@@ -9,12 +10,12 @@ public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name = "userId")
+    @Column(name = "user_id")
     private Long userId;
     private String message;
-
     private Long vacancyId;
-    private String vacancyTitle;
+    @Column(name = "created_date")
+    private LocalDateTime createdDate;
 
     public Notification() {}
 
@@ -42,6 +43,6 @@ public class Notification {
     public Long getVacancyId() { return vacancyId; }
     public void setVacancyId(Long vacancyId) { this.vacancyId = vacancyId; }
 
-    public String getVacancyTitle() { return vacancyTitle; }
-    public void setVacancyTitle(String vacancyTitle) {}
+    public LocalDateTime getCreatedDate() { return createdDate; }
+    public void setCreatedDate(LocalDateTime createdDate) { this.createdDate = createdDate; }
 }

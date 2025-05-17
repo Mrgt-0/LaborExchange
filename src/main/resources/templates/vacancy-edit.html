@@ -67,6 +67,7 @@
         }
 
         .btn-secondary {
+            display: inline-block;
             padding: 12px 20px;
             background-color: #bdc3c7;
             color: #333;
@@ -75,10 +76,13 @@
             font-size: 16px;
             cursor: pointer;
             text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .btn-secondary:hover {
             background-color: #a6a6a6;
+            transform: translateY(-2px);
         }
     </style>
 </head>
@@ -110,7 +114,15 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Сохранить изменения</button>
-        <a href="/vacancies/my" class="btn btn-secondary">Отмена</a>
+        <br><br>
+        <div class="mt-3">
+            <th:block th:if="${#authentication.authorities.?[authority == 'ROLE_EMPLOYER'].size() > 0}">
+                <a href="/vacancies/my" class="btn btn-secondary">Отмена</a>
+            </th:block>
+            <th:block th:if="${#authentication.authorities.?[authority == 'ROLE_ADMIN'].size() > 0}">
+                <a href="/vacancies/admin-vacancy-list" class="btn btn-secondary">Отмена</a>
+            </th:block>
+        </div>
     </form>
 </div>
 </body>

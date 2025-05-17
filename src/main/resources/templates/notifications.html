@@ -42,11 +42,9 @@
   </style>
 </head>
 <body>
-
 <h2>Мои уведомления</h2>
 <div id="notificationsContainer">
     <div th:each="notification : ${notifications}">
-        <div class="notification-title" th:text="${notification.vacancyTitle}"></div>
         <div class="notification-message" th:text="${notification.message}"></div>
         <a th:href="@{/vacancies/user-vacancy-view/{id}(id=${notification.vacancyId})}"
            class="notification-link">Перейти к вакансии</a>
