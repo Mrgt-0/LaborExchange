@@ -1,24 +1,21 @@
 package org.example.Controller;
 import jakarta.persistence.EntityNotFoundException;
-import org.example.DTO.ApplicationDTO;
 import org.example.DTO.ApplicationViewDTO;
 import org.example.DTO.UserDTO;
-import org.example.DTO.VacancyDTO;
-import org.example.Mapper.VacancyMapper;
-import org.example.Model.User;
+import org.example.Model.Application;
 import org.example.Model.Vacancy;
 import org.example.Service.ApplicationService;
+import org.example.Service.ResumeService;
 import org.example.Service.UserService;
 import org.example.Service.VacancyService;
 import org.hibernate.StaleObjectStateException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.util.List;
 
@@ -30,6 +27,10 @@ public class ApplicationController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private VacancyService vacancyService;
+    @Autowired
+    private ResumeService resumeService;
 
     @GetMapping("/my-applications")
     public String myApplicationsPage(Principal principal, Model model) {
@@ -56,8 +57,13 @@ public class ApplicationController {
     public ResponseEntity<?> submit(@RequestParam Long vacancyId, Principal principal) {
         Long userId = getUserIdFromPrincipal(principal);
         try {
-            Vacancy vacancy = applicationService.getVacancyById(vacancyId);
-            System.out.println("Attempting to submit application for User ID: " + userId + " and Vacancy ID: " + vacancy.getId());
+            Vacancy vacancy = vacancyService.getVacancyById(vacancyId);
+
+            if (!resumeService.userHasResume(userId))
+                return ResponseEntity.badRequest().body("Вы не можете подать отклик, так как у вас нет резюме.");
+
+            if (applicationService.hasExistingApplication(userId, vacancyId))
+                return ResponseEntity.badRequest().body("Вы уже подали отклик на эту вакансию.");
 
             applicationService.submitApplication(userId, vacancy);
             return ResponseEntity.ok().body("Отклик отправлен");
@@ -69,9 +75,19 @@ public class ApplicationController {
     }
 
     @PostMapping("/{applicationId}/withdraw")
-    public ResponseEntity<?> withdraw(@PathVariable Long applicationId, Principal principal) {
+    public String withdraw(@PathVariable Long applicationId, Principal principal, RedirectAttributes redirectAttributes) {
         Long userId = getUserIdFromPrincipal(principal);
-        applicationService.withdrawApplication(applicationId, userId);
-        return ResponseEntity.ok().body("Отклик отозван");
+        try {
+            Application application = applicationService.getApplicationById(applicationId);
+            if (application.getUserId().equals(userId)) {
+                applicationService.withdrawApplication(applicationId, userId);
+                redirectAttributes.addFlashAttribute("successMessage", "Отклик успешно отозван.");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Вы не можете отозвать этот отклик.");
+            }
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/applications/my-applications";
     }
 }

@@ -1,11 +1,7 @@
 package org.example.Controller;
 import org.example.Config.MyUserDetails;
-import org.example.DTO.NotificationDTO;
 import org.example.Model.Notification;
-import org.example.Model.Vacancy;
 import org.example.Service.NotificationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;

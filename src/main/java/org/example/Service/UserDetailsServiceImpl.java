@@ -22,7 +22,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             logger.error("Пользователь не найден для email: {}", email);
             throw new UsernameNotFoundException("Пользователь не найден");
         }
-        logger.info("Пользователь найден: {}", userDTO);
+        logger.info("Пользователь найден: {}", userDTO.getEmail());
         return new MyUserDetails(userDTO);
     }
 }

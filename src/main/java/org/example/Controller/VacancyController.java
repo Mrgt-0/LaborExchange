@@ -115,7 +115,6 @@ public class VacancyController {
                 logger.info("У пользователя {} нет созданных вакансий.", user.getName());
             else
                 logger.info("Найденные вакансии: {}", myVacancies.size());
-
             model.addAttribute("myVacancies", myVacancies);
             return "employer-vacancy-list";
         } catch (Exception e) {
@@ -131,7 +130,6 @@ public class VacancyController {
             vacancies = vacancyService.getAllVacancies().stream().map(vacancyMapper::toDTO).collect(Collectors.toList());
         else
             vacancies = vacancyService.findByTitleContainingIgnoreCase(title);
-
         model.addAttribute("vacancies", vacancies);
         model.addAttribute("searchTitle", title);
         return "all-vacancy-list";
@@ -248,7 +246,7 @@ public class VacancyController {
     }
 
     @GetMapping("/employer-vacancy-view/{id}")
-    public String viewEmployerVacancy(Model model, @PathVariable Long id) {
+    public String viewEmployerVacancy(Model model, @PathVariable Long id, Authentication authentication) {
         Vacancy vacancy = vacancyService.getVacancyById(id);
         if (vacancy == null) {
             logger.error("Вакансии с id: {} не найдено", id);
@@ -256,8 +254,13 @@ public class VacancyController {
         }
         VacancyDTO vacancyDTO = vacancyMapper.toDTO(vacancy);
         UserDTO employer = userService.findUserById(vacancyDTO.getEmployer().getId());
+
+        String currentUserEmail = authentication.getName();
+        boolean isOwner = currentUserEmail.equals(employer.getEmail());
+
         model.addAttribute("vacancy", vacancyDTO);
         model.addAttribute("employer", employer);
+        model.addAttribute("isOwner", isOwner);
         return "employer-vacancy-view";
     }
 }

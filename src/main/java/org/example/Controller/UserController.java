@@ -1,14 +1,9 @@
 package org.example.Controller;
 import jakarta.transaction.SystemException;
+import org.example.Config.MyUserDetails;
 import org.example.DTO.UserDTO;
-import org.example.DTO.UserTypeDTO;
-import org.example.Mapper.UserMapper;
-import org.example.Mapper.UserTypeMapper;
-import org.example.Model.User;
-import org.example.Model.UserType;
 import org.example.Service.UserDetailsServiceImpl;
 import org.example.Service.UserService;
-import org.example.Service.UserTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +15,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.security.Principal;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/users")
@@ -32,12 +26,6 @@ public class UserController {
     private UserService userService;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
-    @Autowired
-    private UserMapper userMapper;
-    @Autowired
-    private UserTypeMapper userTypeMapper;
-    @Autowired
-    private UserTypeService userTypeService;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping("/{id}")
@@ -123,12 +111,17 @@ public class UserController {
         };
     }
 
-    @GetMapping("admin-users-list")
-    public String listUsers(Model model) {
-        List<UserDTO> users = userService.getAllUsers();
+    @GetMapping("/admin-users-list")
+    public String listUsers(@RequestParam(required = false) String name,
+                            @RequestParam(required = false) String lastname, Model model) {
+        List<UserDTO> users;
+        if ((name == null || name.isBlank()) && (lastname == null || lastname.isBlank()))
+            users = userService.getAllUsers();
+        else
+            users = userService.findByNameAndLastname(name, lastname);
         model.addAttribute("users", users);
-        List<UserTypeDTO> availableUserTypes = userTypeService.findAll();
-        model.addAttribute("availableUserTypes", availableUserTypes);
+        model.addAttribute("searchTitle", name);
+        model.addAttribute("searchLastname", lastname);
         return "admin-users-list";
     }
 
@@ -140,8 +133,20 @@ public class UserController {
     }
 
     @GetMapping("delete/{id}")
-    public String deleteUser(@PathVariable Long id) {
+    public String deleteUser(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) throws SystemException {
+        Long currentUserId = getUserIdFromPrincipal(principal);
+
+        if (currentUserId.equals(id)) { //защита от дурака. эта хрень работает но не обрабатывается
+            redirectAttributes.addFlashAttribute("error", "Вы не можете удалить свой собственный аккаунт.");
+            logger.error("Вы не можете удалить свой собственный аккаунт.");
+            return "redirect:/users/admin-users-list";
+        }
         userService.deleteUserById(id);
         return "redirect:/users/admin-users-list";
+    }
+
+    private Long getUserIdFromPrincipal(Principal principal) {
+        MyUserDetails userDetails = (MyUserDetails) ((Authentication) principal).getPrincipal();
+        return userDetails.getId();
     }
 }

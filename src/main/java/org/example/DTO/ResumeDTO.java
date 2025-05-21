@@ -1,9 +1,4 @@
 package org.example.DTO;
-
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import org.example.Model.User;
-
 public class ResumeDTO {
     private long id;
     private String title;

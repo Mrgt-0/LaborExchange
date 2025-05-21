@@ -7,6 +7,7 @@ import org.example.Mapper.VacancyMapper;
 import org.example.Model.User;
 import org.example.Model.Vacancy;
 import org.example.Repository.ApplicationRepository;
+import org.example.Repository.NotificationRepository;
 import org.example.Repository.UserRepository;
 import org.example.Repository.VacancyRepository;
 import org.slf4j.Logger;
@@ -31,6 +32,8 @@ public class VacancyService {
     private UserMapper userMapper;
     @Autowired
     private ApplicationRepository applicationRepository;
+    @Autowired
+    private NotificationRepository notificationRepository;
 
     @Transactional
     public void create(String title, String description, String location, float salary, UserDTO employer) {
@@ -68,6 +71,7 @@ public class VacancyService {
     public void delete(Long vacancyId) {
         if(vacancyRepository.findById(vacancyId).isPresent()) {
             applicationRepository.deleteByVacancyId(vacancyId);
+            notificationRepository.deleteByVacancyId(vacancyId);
             vacancyRepository.deleteById(vacancyId);
             logger.info("Вакансия успешно удалена: {}",  vacancyId);
         }else

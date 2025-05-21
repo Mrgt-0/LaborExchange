@@ -1,5 +1,4 @@
 package org.example.DTO;
-
 import java.time.LocalDateTime;
 
 public class NotificationDTO {
@@ -8,14 +7,6 @@ public class NotificationDTO {
     private String message;
     private Long vacancyId;
     private LocalDateTime createdDate;
-
-    public NotificationDTO(long id, Long userId, String message, Long vacancyId, LocalDateTime createdDate) {
-        this.id = id;
-        this.userId = userId;
-        this.message = message;
-        this.vacancyId = vacancyId;
-        this.createdDate = createdDate;
-    }
 
     public NotificationDTO() {}
     public Long getNotificationId() {

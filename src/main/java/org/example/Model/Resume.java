@@ -14,7 +14,6 @@ public class Resume {
     private String skills;
     private String experience;
     private String education;
-
     @ManyToOne
     @JoinColumn(name = "userid", insertable = false, updatable = false)
     private User user;

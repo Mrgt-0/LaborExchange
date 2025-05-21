@@ -16,11 +16,31 @@
         .table th, .table td {
             vertical-align: middle;
         }
+        form.form-inline {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        input.form-control {
+            flex: 1;
+            min-width: 250px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <h1 class="mb-4">Список всех вакансий</h1>
+    <form th:action="@{/vacancies/admin-vacancy-list}" method="get" class="form-inline mb-3">
+        <input type="text" name="title" placeholder="Поиск по названию" class="form-control" th:value="${searchTitle}" />
+        <button type="submit" class="btn btn-primary">Поиск</button>
+        <a th:href="@{/vacancies/admin-vacancy-list}" class="btn btn-primary">Сбросить</a>
+    </form>
 
     <div class="mb-3">
         <a href="/users/admin-profile" class="btn btn-primary">На главную</a>

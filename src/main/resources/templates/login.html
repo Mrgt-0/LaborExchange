@@ -6,9 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Вход в систему TheJobs" />
   <meta name="keywords" content="" />
-
   <title>TheJobs - Вход</title>
-
   <style>
     body {
       font-family: 'Open Sans', sans-serif;
@@ -94,15 +92,12 @@
     }
   </style>
 </head>
-
 <body class="login-page">
 <main>
   <div class="login-block">
     <h1>Войдите в свою учетную запись</h1>
-
     <form th:action="@{/auth/login}" method="post">
       <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-
       <div class="form-group">
         <div class="input-group">
           <span class="input-group-addon"><i class="ti-email"></i></span>
@@ -111,9 +106,7 @@
           </label>
         </div>
       </div>
-
       <hr class="hr-xs" />
-
       <div class="form-group">
         <div class="input-group">
           <span class="input-group-addon"><i class="ti-unlock"></i></span>
@@ -122,15 +115,12 @@
           </label>
         </div>
       </div>
-
-      <div th:if="${errorMessage}" class="error-message">
-        <p th:text="${errorMessage}"></p>
+      <div th:if="${session.errorMessage}" class="error-message">
+        <p th:text="${session.errorMessage}"></p>
       </div>
-
       <button class="btn btn-primary btn-block" type="submit">Войти</button>
     </form>
   </div>
-
   <div class="login-links">
     <a class="pull-right" href="/auth/register">Зарегистрируйте аккаунт</a>
   </div>

@@ -110,6 +110,9 @@
                    th:href="@{/resumes/employer-resume-summary/{id}(id=${app.applicant.id})}"
                    th:text="${app.applicant.name}">Имя соискателя</a>
                 <span th:if="${app.applicant == null}">Неизвестный соискатель</span>
+                <a th:if="${app.applicant != null}"
+                   th:href="@{/chat/{recipientEmail}(recipientEmail=${app.applicant.email})}"
+                class="btn btn-secondary btn-sm mt-1">Чат</a>
             </td>
             <td th:text="${app.status}">Статус</td>
             <td>

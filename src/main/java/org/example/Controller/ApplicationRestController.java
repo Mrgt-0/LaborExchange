@@ -24,8 +24,6 @@ public class ApplicationRestController {
 
     @Autowired
     private UserService userService;
-    @Autowired
-    private UserMapper userMapper;
 
     @GetMapping("/my")
     public ResponseEntity<List<ApplicationViewDTO>> getMyApplications(Principal principal) {

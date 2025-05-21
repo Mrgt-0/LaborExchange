@@ -12,6 +12,8 @@ public class ApplicationViewDTO {
         this.status = status.name();
     }
 
+    public ApplicationViewDTO() {}
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

@@ -1,8 +1,6 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мои отклики</title>
     <style>
         body {
@@ -68,7 +66,7 @@
 <body>
 <div class="container mt-4">
     <h1>Мои отклики</h1>
-    <div id="errorMessage"></div>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
     <table class="table" id="applicationsTable">
         <thead>
         <tr>
@@ -81,115 +79,27 @@
         <tr th:each="app : ${applications}">
             <td th:text="${app.status}"></td>
             <td>
-                <a th:href="@{/vacancies/user-vacancy-view/{id}(id=${app.vacancy.getId()})}">
+                <a th:href="@{/vacancies/user-vacancy-view/{id}(id=${app.vacancy.id})}">
                     <span th:text="${app.vacancy.title}"></span>
                 </a>
             </td>
             <td>
-                <button class="btn btn-danger" th:onclick="'withdrawApplication(' + ${app.id} + ')'">Отозвать</button>
+                <form th:action="@{/applications/{applicationId}/withdraw(applicationId=${app.id})}" method="post"
+                      th:if="${app.status == 'Ожидает'}">
+                    <button type="submit" class="btn btn-danger">Отозвать</button>
+                </form>
+                <br>
+                <span th:if="${app.status == 'WITHDRAWN'}">Отзыв отозван</span>
+                <a th:if="${app.status == 'Принят'}"
+                   th:href="@{/chat/{recipientEmail}(recipientEmail=${app.vacancy.employer.email})}"
+                   class="btn btn-primary">Чат с работодателем</a>
+                <span th:if="${#strings.trim(app.status) != 'PENDING' && #strings.trim(app.status) != 'WITHDRAWN' && #strings.trim(app.status) != 'ACCEPTED'}">-</span>
             </td>
         </tr>
         </tbody>
     </table>
+    <br>
     <a href="/users/user-profile" class="btn btn-primary">На главную</a>
 </div>
-<script>
-    function showError(message) {
-        const errorDiv = document.getElementById('errorMessage');
-        errorDiv.textContent = message;
-        errorDiv.style.display = 'block';
-    }
-    function hideError() {
-        const errorDiv = document.getElementById('errorMessage');
-        errorDiv.style.display = 'none';
-    }
-    async function loadApplications() {
-        hideError();
-        try {
-            const response = await fetch('/applications/my', { credentials: 'include' });
-            if (!response.ok) {
-                console.error('Ошибка загрузки данных. Статус ответа:', response.status);
-                return;
-            }
-            const applications = await response.json();
-            const tbody = document.querySelector('#applicationsTable tbody');
-            tbody.innerHTML = '';
-
-            if (applications.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" class="text-center">Отклики не найдены</td></tr>';
-                return;
-            }
-
-            const statusMap = {
-                PENDING: 'Ожидает обработки',
-                ACCEPTED: 'Принят',
-                REJECTED: 'Отклонён',
-                WITHDRAWN: 'Отозван',
-            };
-
-            applications.forEach(app => {
-                const tr = document.createElement('tr');
-                const tdStatus = document.createElement('td');
-                tdStatus.textContent = statusMap[app.status] || 'Неизвестный статус';
-                tr.appendChild(tdStatus);
-
-                const tdVacancy = document.createElement('td');
-                const vacancyData = app.vacancy || {};
-                const vacancyId = vacancyData.id || app.vacancyId;
-                const title = vacancyData.title || app.vacancyTitle || 'Перейти к вакансии';
-
-                if (vacancyId) {
-                    const a = document.createElement('a');
-                    a.textContent = title;
-                    a.href = `/vacancies/user-vacancy-view/${vacancyId}`;
-                    a.style.textDecoration = 'none';
-                    a.style.color = 'blue';
-                    tdVacancy.appendChild(a);
-                } else {
-                    tdVacancy.textContent = title;
-                }
-                tr.appendChild(tdVacancy);
-
-                const tdActions = document.createElement('td');
-                if (app.status === 'PENDING') {
-                    const btnWithdraw = document.createElement('button');
-                    btnWithdraw.className = 'btn btn-danger';
-                    btnWithdraw.textContent = 'Отозвать';
-                    btnWithdraw.onclick = () => withdrawApplication(app.id);
-                    tdActions.appendChild(btnWithdraw);
-                } else if (app.status === 'WITHDRAWN') {
-                    tdActions.textContent = 'Отзыв отозван';
-                } else {
-                    tdActions.textContent = '-';
-                }
-                tr.appendChild(tdActions);
-
-                tbody.appendChild(tr);
-            });
-        } catch (e) {
-            showError(e.message || 'Произошла ошибка при загрузке данных');
-        }
-    }
-
-    async function withdrawApplication(applicationId) {
-        if (!confirm('Вы уверены, что хотите отозвать отклик?')) return;
-        hideError();
-        try {
-            const response = await fetch('/applications/' + applicationId + '/withdraw', {
-                method: 'POST',
-                credentials: 'include'
-            });
-            if (response.ok) {
-                await loadApplications(); // Обновляем список после отзыва
-            } else {
-                const errorText = await response.text();
-                showError('Ошибка при отзыве отклика: ' + errorText);
-            }
-        } catch (e) {
-            showError('Сетевая ошибка: ' + e.message);
-        }
-    }
-    document.addEventListener('DOMContentLoaded', loadApplications);
-</script>
 </body>
 </html>

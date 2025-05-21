@@ -2,20 +2,16 @@ package org.example.Service;
 import jakarta.transaction.SystemException;
 import jakarta.transaction.Transactional;
 import org.example.DTO.UserDTO;
-import org.example.DTO.UserTypeDTO;
 import org.example.Mapper.UserMapper;
-import org.example.Mapper.UserTypeMapper;
 import org.example.Model.User;
 import org.example.Model.UserType;
-import org.example.Repository.NotificationRepository;
-import org.example.Repository.UserRepository;
-import org.example.Repository.UserTypeRepository;
+import org.example.Model.Vacancy;
+import org.example.Repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,9 +27,15 @@ public class UserService {
     @Autowired
     private UserTypeRepository userTypeRepository;
     @Autowired
-    private UserTypeMapper userTypeMapper;
-    @Autowired
     private NotificationRepository notificationRepository;
+    @Autowired
+    private ResumeService resumeService;
+    @Autowired
+    private ApplicationRepository applicationRepository;
+    @Autowired
+    private MessageRepository messageRepository;
+    @Autowired
+    private VacancyRepository vacancyRepository;
 
     @Transactional
     public void registerUser(UserDTO userDTO) {
@@ -94,6 +96,12 @@ public class UserService {
         return userMapper.toDTO(user);
     }
 
+    public List<UserDTO> findByNameAndLastname(String name, String lastname) {
+        return userRepository.findByNameContainingIgnoreCaseOrLastnameContainingIgnoreCase(name, lastname).stream()
+                .map(userMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public void updateUser(String email, UserDTO updatedUser) throws SystemException {
         userRepository.findByEmail(email)
@@ -107,12 +115,20 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUserById(Long userId) {
-        Optional<UserDTO> optionalUser = userRepository.findById(userId).stream().map(userMapper::toDTO).findFirst();
+    public void deleteUserById(Long userId) throws SystemException {
+        Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
-            UserDTO user = optionalUser.get();
+            User user = optionalUser.get();
+            resumeService.delete(userId);
             notificationRepository.deleteByUserId(userId);
-            userRepository.delete(userMapper.toEntity(user));
+            applicationRepository.deleteByUserId(userId);
+            List<Vacancy> vacancies = vacancyRepository.findByEmployerId(userId);
+            for (Vacancy vacancy : vacancies) {
+                applicationRepository.deleteByVacancyId(vacancy.getId()); // Удаляем все заявки, связанные с вакансией
+                vacancyRepository.delete(vacancy); // Удаляем вакансию
+            }
+            messageRepository.deleteByUser(user);
+            userRepository.delete(user);
             logger.info("Пользователь {} успешно удален.", user.getEmail());
         } else
             logger.error("Пользователь с ID {} не найден, удаление невозможно.", userId);

@@ -37,8 +37,4 @@ public class ApplicationDTO {
     public void submit() {
         this.status = ApplicationStatus.PENDING;
     }
-    // Метод отзыва отклика
-    public void withdraw() {
-        this.status = ApplicationStatus.WITHDRAWN;
-    }
 }

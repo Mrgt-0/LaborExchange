@@ -86,19 +86,6 @@
         td.actions {
             white-space: nowrap;
         }
-        a.btn-info {
-            background-color: #17a2b8;
-            color: white;
-            margin-right: 8px;
-            border-radius: 6px;
-            padding: 7px 14px;
-            text-decoration: none;
-            display: inline-block;
-            transition: background-color 0.3s ease;
-        }
-        a.btn-info:hover {
-            background-color: #117a8b;
-        }
         button.btn-danger {
             background-color: #dc3545;
             color: white;
@@ -172,7 +159,6 @@
 <body>
 <div class="container">
     <h1>Список ваших резюме</h1>
-
     <form th:action="@{/resumes/all-resume-list}" method="get" class="form-inline mb-3">
         <input type="text" name="title" placeholder="Поиск по названию" class="form-control" th:value="${searchTitle}" />
         <button type="submit" class="btn btn-primary">Поиск</button>

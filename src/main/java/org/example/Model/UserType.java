@@ -1,8 +1,6 @@
 package org.example.Model;
-
 import jakarta.persistence.*;
 import org.example.Enum.UserTypeEnum;
-
 import java.util.Objects;
 
 @Entity
@@ -24,6 +22,8 @@ public class UserType {
 
     public UserTypeEnum getType() { return type; }
 
+    public void setType(UserTypeEnum type) { this.type = type; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -33,11 +33,7 @@ public class UserType {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+    public int hashCode() { return Objects.hash(id); }
 
-    public String getTypeString() {
-        return type.toString();
-    }
+    public String getTypeString() { return type.toString(); }
 }

@@ -6,8 +6,5 @@ public class UserTypeDTO {
     private UserTypeEnum type;
 
     public UserTypeDTO() {}
-    public UserTypeDTO(UserTypeEnum type) {
-        this.type = type;
-    }
     public UserTypeEnum getType() { return type; }
 }

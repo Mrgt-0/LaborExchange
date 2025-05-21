@@ -74,4 +74,8 @@ public class ResumeService {
         return resumeRepository.findByTitleContainingIgnoreCase(title)
                 .stream().map(resume -> resumeMapper.toDTO(resume)).collect(Collectors.toList());
     }
+
+    public boolean userHasResume(Long userId) {
+        return resumeRepository.existsByUserId(userId);
+    }
 }

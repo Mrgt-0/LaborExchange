@@ -1,6 +1,4 @@
 package org.example.DTO;
-
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import org.example.Model.User;
 
