@@ -136,7 +136,7 @@ public class UserController {
     public String deleteUser(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) throws SystemException {
         Long currentUserId = getUserIdFromPrincipal(principal);
 
-        if (currentUserId.equals(id)) { //защита от дурака. эта хрень работает но не обрабатывается
+        if (currentUserId.equals(id)) {
             redirectAttributes.addFlashAttribute("error", "Вы не можете удалить свой собственный аккаунт.");
             logger.error("Вы не можете удалить свой собственный аккаунт.");
             return "redirect:/users/admin-users-list";
