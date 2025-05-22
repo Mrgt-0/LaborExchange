@@ -13,6 +13,7 @@
 - **Администрирование системы**: Пользователь с правами администратора может управлять всеми пользователями, вакансиями и резюме.
 
 <hr>
+
   ##Технологии
 - **Backend**: Java, Spring Boot, Spring Data JPA
 - **Frontend**: Thymeleaf + Bootstrap, HTML, CSS, JavaScript
